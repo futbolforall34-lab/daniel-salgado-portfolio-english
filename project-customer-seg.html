@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Segmentación de Clientes | Daniel Salgado</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:#060e20;color:#dee5ff;overflow-x:hidden;min-height:100vh}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:#060e20}
+  ::-webkit-scrollbar-thumb{background:#40485d;border-radius:2px}
+  #bg-canvas{position:fixed;inset:0;pointer-events:none;opacity:0.25;z-index:0}
+  .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+  .orb-1{width:40%;height:40%;top:-10%;left:-10%;background:#72dcff;opacity:.08;animation:orb-float1 8s ease-in-out infinite}
+  .orb-2{width:30%;height:30%;bottom:-10%;right:-10%;background:#ac8aff;opacity:.07;animation:orb-float2 10s ease-in-out infinite}
+  @keyframes orb-float1{0%,100%{transform:translate(0,0)}50%{transform:translate(5%,8%)}}
+  @keyframes orb-float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-6%,-5%)}}
+  #navbar{background:rgba(6,14,32,.92);border-bottom:1px solid rgba(64,72,93,.3);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:sticky;top:0;z-index:50}
+  #content-wrap{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:3rem 1.5rem 5rem}
+  #md-content h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.75rem,4vw,2.5rem);font-weight:700;letter-spacing:-.03em;line-height:1.1;color:#dee5ff;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(64,72,93,.4)}
+  #md-content h2{font-family:'Space Grotesk',sans-serif;font-size:1.375rem;font-weight:700;letter-spacing:-.02em;color:#72dcff;margin:2.5rem 0 1rem;padding-left:.75rem;border-left:2px solid #72dcff}
+  #md-content h3{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;color:#69f6b8;margin:1.75rem 0 .625rem}
+  #md-content h4{font-family:'Space Grotesk',sans-serif;font-size:.9375rem;font-weight:600;color:#ac8aff;margin:1.25rem 0 .5rem}
+  #md-content p{font-size:.9375rem;line-height:1.75;color:#a3aac4;margin-bottom:1rem}
+  #md-content ul,#md-content ol{padding-left:1.5rem;margin-bottom:1rem}
+  #md-content li{font-size:.9375rem;line-height:1.75;color:#a3aac4;margin-bottom:.25rem}
+  #md-content li::marker{color:#72dcff}
+  #md-content strong{color:#dee5ff;font-weight:600}
+  #md-content em{color:#ac8aff;font-style:italic}
+  #md-content code{font-family:'Courier New',monospace;font-size:.8125rem;background:#0f1930;color:#69f6b8;padding:.15rem .4rem;border-radius:.25rem;border:1px solid rgba(105,246,184,.15)}
+  #md-content pre{background:#091328;border:1px solid #192540;border-radius:.5rem;padding:1.25rem;overflow-x:auto;margin:1.25rem 0}
+  #md-content pre code{background:none;border:none;padding:0;font-size:.8125rem;color:#69f6b8}
+  #md-content blockquote{border-left:3px solid #72dcff;padding:1rem 1.25rem;margin:1.5rem 0;background:rgba(114,220,255,.04);border-radius:0 .375rem .375rem 0}
+  #md-content blockquote p{color:#a3aac4;margin:0;font-style:italic}
+  #md-content table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.875rem}
+  #md-content th{background:#141f38;color:#72dcff;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;padding:.75rem 1rem;text-align:left;border-bottom:1px solid #40485d}
+  #md-content td{padding:.625rem 1rem;border-bottom:1px solid rgba(64,72,93,.3);color:#a3aac4}
+  #md-content tr:last-child td{border-bottom:none}
+  #md-content tr:hover td{background:rgba(114,220,255,.03)}
+  #md-content hr{border:none;border-top:1px solid #192540;margin:2.5rem 0}
+  #md-content a{color:#72dcff;text-decoration:none;border-bottom:1px solid rgba(114,220,255,.3);transition:border-color .2s,color .2s}
+  #md-content a:hover{color:#69f6b8;border-color:rgba(105,246,184,.5)}
+  #md-content img{max-width:100%;border-radius:.5rem;margin:1rem 0}
+  #loader{position:fixed;inset:0;z-index:100;background:#060e20;display:flex;align-items:center;justify-content:center;transition:opacity .4s}
+  #loader.hidden{opacity:0;pointer-events:none}
+  .loader-ring{width:40px;height:40px;border:1px solid #40485d;border-top-color:#72dcff;border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .back-btn{display:inline-flex;align-items:center;gap:.5rem;color:#a3aac4;text-decoration:none;font-family:'Space Grotesk',sans-serif;font-size:.8125rem;font-weight:500;padding:.5rem 1rem;border:1px solid rgba(64,72,93,.5);border-radius:.25rem;transition:color .2s,border-color .2s,background .2s}
+  .back-btn:hover{color:#72dcff;border-color:rgba(114,220,255,.4);background:rgba(114,220,255,.05)}
+  .back-btn svg{transition:transform .2s}
+  .back-btn:hover svg{transform:translateX(-3px)}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="loader-ring"></div></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<canvas id="bg-canvas"></canvas>
+
+<nav id="navbar">
+  <div style="max-width:800px;margin:0 auto;padding:.875rem 1.5rem;display:flex;justify-content:space-between;align-items:center">
+    <a href="index.html" style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#dee5ff;text-decoration:none;letter-spacing:-.01em">Daniel Salgado</a>
+    <a class="back-btn" href="index.html">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      Volver al portfolio
+    </a>
+  </div>
+</nav>
+
+<div id="content-wrap">
+  <div id="md-content"></div>
+</div>
+
+<script type="text/markdown" id="md-source">
+# Segmentación de Clientes en E-Commerce
+## Transformando Datos de Transacciones en Estrategia de Ingresos
+
+---
+
+## El Desafío
+
+Todo negocio tiene un problema que los datos pueden resolver, pero **la mayoría de empresas no saben realmente quiénes son sus clientes**.
+
+Un minorista de e-commerce basado en el Reino Unido tenía:
+- **4,338 clientes** durante un año de operaciones
+- **£8.9 millones** en ingresos
+- **Cero información** sobre cuáles clientes valía la pena mantener
+
+**La Pregunta**: ¿Podrían identificarse grupos de clientes con valores y necesidades dramáticamente distintos? ¿Podría construirse una estrategia alrededor de ellos?
+
+---
+
+## Lo que Descubrí
+
+### El Principio de Pareto Confirmado
+
+El 15.8% superior de clientes genera **72.7% de todos los ingresos**. Un pequeño grupo de VIPs carga todo el negocio sobre sus hombros.
+
+### Emergieron Cuatro Personas de Cliente Distintas
+
+| Segmento | Tamaño | Ingresos | Valor Promedio | Insight Clave |
+|-------|---------|------|---------|-----------|
+| Clientes VIP | 687 | 63.7% | £8,235 | Compran semanalmente, máxima lealtad |
+| Clientes Leales | 1,599 | 22.0% | £1,220 | Base estable del negocio |
+| Grandes Gastadores Ocasionales | 312 | 8.7% | £2,471 | Alto valor pero esporádico |
+| En Riesgo / Inactivos | 1,740 | 5.7% | £292 | No han comprado en meses |
+
+---
+
+## El Proceso de Análisis
+
+### Paso 1: Transformar Datos Crudos en Historias de Clientes
+
+- Agregué 541,909 transacciones individuales en 4,338 perfiles de cliente
+- Construí **métricas RFM** (Recencia, Frecuencia, Monetaria) para medir valor de cliente y nivel de engagement
+
+### Paso 2: Encontrar Clusters Naturales de Clientes
+
+- Apliqué clustering K-Means para identificar agrupaciones naturales
+- Usé el Método del Codo para determinar el número óptimo de segmentos (k=4)
+- Validé separación de clusters con visualización PCA
+
+### Paso 3: Interpretar Resultados a Través de la Lente de Negocio
+
+- Perfilé cada cluster con significado real de negocio
+- Analicé patrones temporales (tendencias de ingresos en el tiempo)
+- Identifiqué patrones de estacionalidad y engagement
+
+---
+
+## La Historia que Cada Segmento Cuenta
+
+### Clientes VIP (15.8% | 63.7% de ingresos)
+
+**Perfil:** Compran cada 2 semanas en promedio (14 compras/año), gastando £8,235 por cliente, última compra hace solo 15 días.
+
+**Recomendación:** Programa VIP Exclusivo, Gestión de Relaciones, Personalización a Escala, Oportunidad de Expansión.
+
+**Impacto Esperado:** +5-10% retención = **£200K-400K ingresos adicionales**
+
+---
+
+### Clientes Leales (36.9% | 22% de ingresos)
+
+**Perfil:** Compran 3-4 veces al año, gastando £1,220 por cliente, última compra hace 49 días.
+
+**Recomendación:** Programa de Upsell, Recompensas de Lealtad, Venta Cruzada, Construcción de Comunidad.
+
+**Impacto Esperado:** +20-30% aumento de frecuencia = **£150K-200K ingresos adicionales**
+
+---
+
+### Grandes Compradores Ocasionales (7.2% | 8.7% de ingresos)
+
+**Perfil:** Compran dos veces al año (esporádico), gastando £2,471 por cliente, última compra hace 124 días.
+
+**Recomendación:** Outreach Predictivo, Recomendaciones Personalizadas, Gestión de Cuenta Dedicada.
+
+**Impacto Esperado:** +20-30% frecuencia de compra = **£50K-75K ingresos adicionales**
+
+---
+
+### En Riesgo / Inactivos (40.1% | 5.7% de ingresos)
+
+**Perfil:** Compraron solo 1-2 veces, gastando solo £292 por cliente, última compra hace 155 días.
+
+**Recomendación:** Campaña de Recuperación con Incentivos (15% descuento), Segmentación Inteligente por categoría de producto original, Monitoreo de Rotación.
+
+**Impacto Esperado:** +15-20% reactivación = **£20K-30K ingresos adicionales**
+
+---
+
+## Resumen de Impacto de Negocio
+
+| Iniciativa | Segmento Target | Ganancia Esperada | Cronograma |
+|-----------|---|---|---|
+| Programa de Lealtad VIP | VIP | +£200K-400K | 30 días |
+| Upsell/Venta Cruzada | Leales | +£150K-200K | 90 días |
+| Campaña de Engagement | Ocasionales | +£50K-75K | 90 días |
+| Programa de Recuperación | En Riesgo | +£20K-30K | Continuo |
+| **OPORTUNIDAD TOTAL** | **Todos** | **+£420K-705K** | **6 meses** |
+
+Con estrategias reflexivas específicas por segmento, este análisis puede desbloquear **más de £500K adicionales en ingresos anuales** sin adquirir un solo cliente nuevo.
+
+---
+
+## Arquitectura Técnica
+
+**Fase 1: Preparación de Datos** — Limpié 541,909 transacciones, eliminé cancelaciones y registros inválidos
+
+**Fase 2: Ingeniería de Características** — Construí métricas RFM desde transacciones crudas, agregadas a nivel de cliente, creé 5 dimensiones conductuales
+
+**Fase 3: Análisis Exploratorio** — Identifiqué distribución de Pareto, analicé correlaciones, perfilé distribuciones conductuales
+
+**Fase 4: Clustering** — Apliqué K-Means con k=4, características estandarizadas, validé con visualización PCA
+
+**Fase 5: Interpretación** — Perfilé cada cluster con significado de negocio, analicé patrones temporales, generé recomendaciones accionables
+
+---
+
+## Herramientas Utilizadas
+
+`Python` · `Pandas & NumPy` · `Scikit-learn` · `Matplotlib & Seaborn` · `Jupyter Notebooks` · `Dashboard Streamlit`
+
+---
+
+## Métricas Clave
+
+| Métrica | Valor |
+|--------|-------|
+| Clientes Analizados | 4,338 |
+| Transacciones | 541,909 |
+| Ingresos Analizados | £8,886,209 |
+| Período de Tiempo | 365 días |
+| Segmentos Identificados | 4 |
+| Impacto de Ingresos Esperado | +£420K-705K |
+
+---
+
+## Insights Clave
+
+> **"Solo 15.8% de clientes generan 72.7% de ingresos"**
+
+Este único insight cambia todo acerca de cómo asignas presupuesto de marketing, soporte al cliente y enfoque estratégico.
+
+> **"Cada segmento tiene un lever diferente"**
+
+- VIP: Lealtad y retención
+- Leales: Frecuencia y upsell
+- Ocasionales: Engagement y recordatorios
+- En Riesgo: Reactivación rentable o salida elegante
+
+---
+
+*La ciencia de datos no se trata de construir modelos perfectos — se trata de encontrar el insight que cambia cómo piensas en tu negocio.*
+
+---
+
+## Repositorio
+
+[Ver código completo en GitHub →](https://github.com/futbolforall34-lab/customer-segmentation-retail)
+</script>
+
+<script>
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  const COLORS = ['rgba(114,220,255,','rgba(105,246,184,','rgba(172,138,255,'];
+  for (let i = 0; i < 50; i++) {
+    particles.push({
+      x: Math.random()*W, y: Math.random()*H,
+      vx: (Math.random()-.5)*.3, vy: (Math.random()-.5)*.3,
+      r: Math.random()*1.5+.5,
+      color: COLORS[Math.floor(Math.random()*COLORS.length)],
+      opacity: Math.random()*.35+.1
+    });
+  }
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0) p.x=W; if(p.x>W) p.x=0;
+      if(p.y<0) p.y=H; if(p.y>H) p.y=0;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = p.color+p.opacity+')'; ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+const md = document.getElementById('md-source').textContent;
+document.getElementById('md-content').innerHTML = marked.parse(md);
+document.getElementById('loader').classList.add('hidden');
+</script>
+</body>
+</html>

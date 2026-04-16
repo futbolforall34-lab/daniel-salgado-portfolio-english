@@ -1,0 +1,13 @@
+.env
+.DS_Store
+Icon
+*/data/
+*/__pycache__/
+*/.ipynb_checkpoints/
+.agents/
+.claude/
+*.pyc
+*.pyo
+models/
+.venv/
+venv/

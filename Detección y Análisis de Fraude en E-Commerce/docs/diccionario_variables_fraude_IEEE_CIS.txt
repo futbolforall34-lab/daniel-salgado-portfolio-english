@@ -1,0 +1,367 @@
+========================================================
+NOMBRE DEL PROYECTO:
+Detección de Fraude en Transacciones de E-Commerce con Explicabilidad
+(IEEE-CIS Fraud Detection — Nivel Senior)
+
+DATASET ELEGIDO:
+IEEE-CIS Fraud Detection Dataset (Vesta Corporation)
+
+FUENTE:
+https://www.kaggle.com/competitions/ieee-fraud-detection/data
+
+DESCRIPCIÓN GENERAL:
+Dataset real de transacciones de e-commerce provisto por Vesta Corporation
+(procesador de pagos líder en protección antifraude). Contiene 590,540 transacciones
+registradas durante 6 meses, de las cuales solo el 3.5% son fraude. El dataset
+está dividido en dos archivos que se unen por TransactionID:
+
+  - train_transaction.csv → 590,540 filas × 394 columnas (datos de la transacción)
+  - train_identity.csv   → 144,233 filas × 41 columnas  (datos de identidad/dispositivo)
+
+IMPORTANTE: No todas las transacciones tienen datos de identidad asociados.
+El join entre ambas tablas es de tipo LEFT JOIN desde transacciones hacia identidad.
+
+UNIDAD DE ANÁLISIS:
+Cada fila representa una transacción individual de pago en línea (card-not-present).
+
+VARIABLE TARGET:
+isFraud → 1 = transacción fraudulenta, 0 = transacción legítima
+Tasa de fraude: ~3.5% (dataset altamente desbalanceado)
+
+NOTA SOBRE EL DICCIONARIO:
+- [DOC] = Variable documentada oficialmente por Vesta/Kaggle
+- [INF] = Variable inferida por la comunidad científica a partir de EDA
+- [ANON] = Variable intencionalmente anonimizada por seguridad (Vesta no reveló su significado exacto)
+
+========================================================
+TABLA 1: TRAIN_TRANSACTION (394 columnas)
+========================================================
+
+--- IDENTIFICADORES Y TARGET ---
+
+Variable: TransactionID
+Descripción: Identificador único de cada transacción.
+Tipo: Numérica entera
+Observaciones: [DOC] Clave primaria. Usada para hacer join con train_identity.csv.
+
+Variable: isFraud
+Descripción: Variable objetivo binaria. Indica si la transacción es fraudulenta.
+Tipo: Binaria (0/1)
+Posibles valores: 1 = fraude, 0 = legítima
+Observaciones: [DOC] TARGET del modelo. Altamente desbalanceada (~3.5% fraude).
+
+--- TEMPORALES ---
+
+Variable: TransactionDT
+Descripción: Timedelta (diferencia de tiempo) desde una fecha de referencia no revelada.
+             No es un timestamp absoluto, sino segundos desde un punto de referencia.
+Tipo: Numérica entera (segundos)
+Posibles valores: Entero positivo creciente
+Observaciones: [DOC] Se puede derivar: hora del día, día de la semana, mes relativo.
+               Es una de las variables más importantes del dataset.
+
+--- MONTO Y PRODUCTO ---
+
+Variable: TransactionAmt
+Descripción: Monto de la transacción en dólares USD.
+Tipo: Numérica continua (float)
+Posibles valores: Decimal positivo. La parte decimal puede contener información
+                  relevante sobre el tipo de transacción.
+Observaciones: [DOC] Variable predictora muy importante. Presta atención a valores
+               atípicos y a la distribución por log(TransactionAmt).
+
+Variable: ProductCD
+Descripción: Código del producto o servicio involucrado en la transacción.
+Tipo: Categórica
+Posibles valores: W, H, C, S, R (significados exactos anonimizados)
+Observaciones: [DOC] Permite segmentar el análisis por tipo de transacción.
+               "W" es la categoría más común.
+
+--- TARJETA DE PAGO (card1 a card6) ---
+
+Variable: card1
+Descripción: Información relacionada con la tarjeta de pago (posiblemente número de tarjeta hasheado o BIN).
+Tipo: Numérica entera
+Posibles valores: Entero, varía ampliamente
+Observaciones: [INF] Alta cardinalidad. Útil como ID de tarjeta para ingeniería de features de frecuencia.
+
+Variable: card2
+Descripción: Atributo adicional de la tarjeta (posiblemente fecha de expiración o CVV hasheado).
+Tipo: Numérica continua
+Posibles valores: Decimal o entero
+Observaciones: [INF] Frecuentemente nulo.
+
+Variable: card3
+Descripción: Atributo de la tarjeta (posiblemente país de emisión o banco emisor).
+Tipo: Numérica continua
+Posibles valores: Decimal
+Observaciones: [ANON]
+
+Variable: card4
+Descripción: Tipo de red de la tarjeta.
+Tipo: Categórica
+Posibles valores: visa, mastercard, american express, discover
+Observaciones: [DOC] Una de las pocas variables de tarjeta con valores interpretables.
+
+Variable: card5
+Descripción: Atributo adicional de la tarjeta.
+Tipo: Numérica continua
+Posibles valores: Decimal
+Observaciones: [ANON]
+
+Variable: card6
+Descripción: Categoría de la tarjeta.
+Tipo: Categórica
+Posibles valores: credit, debit, debit or credit, charge card
+Observaciones: [DOC] Permite diferenciar comportamiento entre tarjetas de crédito y débito.
+
+--- DIRECCIÓN ---
+
+Variable: addr1
+Descripción: Código postal o región de facturación del comprador.
+Tipo: Numérica entera
+Posibles valores: Entero (código de región de EE.UU.)
+Observaciones: [DOC] Permite análisis geográfico de fraude por región.
+
+Variable: addr2
+Descripción: País de facturación del comprador.
+Tipo: Numérica entera
+Posibles valores: Entero (código de país)
+Observaciones: [DOC] Mayoría de valores en 87 (EE.UU.).
+
+--- DISTANCIAS ---
+
+Variable: dist1
+Descripción: Distancia entre la dirección de facturación y la dirección del banco emisor de la tarjeta.
+Tipo: Numérica continua
+Posibles valores: Decimal positivo o nulo
+Observaciones: [INF] Alta tasa de nulos. Una distancia muy grande puede indicar fraude.
+
+Variable: dist2
+Descripción: Distancia adicional (posiblemente entre dirección de envío y de facturación).
+Tipo: Numérica continua
+Posibles valores: Decimal positivo o nulo
+Observaciones: [INF] Muchos nulos.
+
+--- DOMINIOS DE EMAIL ---
+
+Variable: P_emaildomain
+Descripción: Dominio de correo electrónico del comprador (Purchaser).
+Tipo: Categórica / Texto
+Posibles valores: gmail.com, yahoo.com, hotmail.com, anonymous.com, etc.
+Observaciones: [DOC] Dominios desconocidos o inusuales están correlacionados con fraude.
+
+Variable: R_emaildomain
+Descripción: Dominio de correo electrónico del destinatario (Recipient).
+Tipo: Categórica / Texto
+Posibles valores: gmail.com, yahoo.com, hotmail.com, etc. / nulo si no aplica
+Observaciones: [DOC] Alta tasa de nulos. Presente en transacciones con destinatario distinto al comprador.
+
+--- VARIABLES C (Counting Features: C1 a C14) ---
+
+Descripción general: Variables de conteo que capturan comportamientos históricos
+asociados a la tarjeta, como cuántas direcciones o dispositivos distintos ha usado.
+Tipo: Numérica continua
+Significados exactos: anonimizados por Vesta por seguridad.
+Observaciones: [ANON] Muy útiles para detectar patrones de fraude en cadena.
+
+Variable: C1 — Posiblemente: conteo de direcciones asociadas a la tarjeta
+Variable: C2 — Posiblemente: conteo de tarjetas asociadas a la dirección
+Variable: C3 — Conteo no revelado
+Variable: C4 — Conteo no revelado
+Variable: C5 — Posiblemente: conteo de pagos con el mismo email
+Variable: C6 — Conteo no revelado
+Variable: C7 — Conteo no revelado
+Variable: C8 — Conteo no revelado
+Variable: C9 — Posiblemente: conteo de pagos con el mismo número de tarjeta
+Variable: C10 — Conteo no revelado
+Variable: C11 — Conteo no revelado
+Variable: C12 — Conteo no revelado
+Variable: C13 — Posiblemente: conteo de transacciones del vendedor
+Variable: C14 — Conteo no revelado
+
+--- VARIABLES D (Time Delta Features: D1 a D15) ---
+
+Descripción general: Timedeltas que capturan diferencias de tiempo entre eventos
+relacionados con la tarjeta o cuenta (ej. días desde la última transacción).
+Tipo: Numérica continua (días)
+Observaciones: [ANON] D1 es la más informativa. Alta correlación con fraude cuando
+               los valores son muy pequeños (muchas transacciones en poco tiempo).
+
+Variable: D1 — Días desde la transacción previa con la misma tarjeta (inferido)
+Variable: D2 — Similar a D1, posiblemente con otro nivel de agrupación
+Variable: D3 — Días entre eventos relacionados con la cuenta
+Variable: D4 — Timedelta no revelado
+Variable: D5 — Timedelta no revelado
+Variable: D6 — Timedelta no revelado
+Variable: D7 — Timedelta no revelado
+Variable: D8 — Timedelta no revelado
+Variable: D9 — Fracción del día (hora del día normalizada, inferido)
+Variable: D10 — Timedelta no revelado
+Variable: D11 — Timedelta no revelado
+Variable: D12 — Timedelta no revelado
+Variable: D13 — Timedelta no revelado
+Variable: D14 — Timedelta no revelado
+Variable: D15 — Timedelta no revelado
+
+--- VARIABLES M (Match Features: M1 a M9) ---
+
+Descripción general: Variables booleanas que indican si ciertos atributos coinciden
+(ej. nombre en la tarjeta vs nombre en la dirección de facturación).
+Tipo: Categórica booleana
+Posibles valores: T (True = coincide), F (False = no coincide), nulo
+Observaciones: [INF] Desacuerdos entre atributos son señales de alerta de fraude.
+
+Variable: M1 — Match entre nombre en tarjeta y nombre en dirección (inferido)
+Variable: M2 — Match no revelado
+Variable: M3 — Match no revelado
+Variable: M4 — Match no revelado (posiblemente: card verification)
+Variable: M5 — Match no revelado
+Variable: M6 — Match no revelado
+Variable: M7 — Match no revelado
+Variable: M8 — Match no revelado
+Variable: M9 — Match no revelado
+
+--- VARIABLES V (Vesta Engineered Features: V1 a V339) ---
+
+Descripción general: Features ingenierizadas por Vesta Corporation que representan
+rankings, conteos y relaciones entre entidades (tarjeta, dirección, dispositivo,
+IP, etc.). Son el corazón del dataset y las más predictivas.
+Tipo: Numérica continua (la mayoría)
+Posibles valores: Varían ampliamente; muchos tienen alta tasa de nulos
+Observaciones: [ANON] No se revelaron sus significados por seguridad comercial.
+               Los mejores modelos de la competencia se basan fuertemente en ellas.
+               Están agrupadas en bloques con patrones similares de nulos:
+               V1-V11, V12-V34, V35-V52, V53-V74, V75-V94, V95-V137,
+               V138-V166, V167-V216, V217-V278, V279-V321, V322-V339.
+
+========================================================
+TABLA 2: TRAIN_IDENTITY (41 columnas)
+========================================================
+
+Variable: TransactionID
+Descripción: Clave foránea para hacer join con train_transaction.csv.
+Tipo: Numérica entera
+Observaciones: [DOC] Solo ~24% de las transacciones tienen datos de identidad.
+
+Variable: DeviceType
+Descripción: Tipo de dispositivo desde el que se realizó la transacción.
+Tipo: Categórica
+Posibles valores: desktop, mobile
+Observaciones: [DOC] Los fraudes desde mobile vs desktop tienen patrones distintos.
+
+Variable: DeviceInfo
+Descripción: Información específica del dispositivo (modelo, sistema operativo).
+Tipo: Texto / Categórica de alta cardinalidad
+Posibles valores: Windows, iOS Device, MacOS, Trident/7.0, rv:11.0, etc.
+Observaciones: [DOC] Alta cardinalidad. Requiere limpieza y agrupación.
+
+--- VARIABLES id_01 a id_11 (Numéricas) ---
+
+Descripción general: Variables de identidad numéricas. Capturan características
+del dispositivo, red o sesión del usuario.
+Tipo: Numérica continua
+Observaciones: [ANON] Sus significados están anonimizados.
+
+id_01 — Posiblemente: puntaje de riesgo del dispositivo
+id_02 — Posiblemente: número de cuentas asociadas al dispositivo
+id_03 — Variable no revelada
+id_04 — Variable no revelada
+id_05 — Variable no revelada
+id_06 — Variable no revelada
+id_07 — Variable no revelada
+id_08 — Variable no revelada
+id_09 — Variable no revelada
+id_10 — Variable no revelada
+id_11 — Variable no revelada
+
+--- VARIABLES id_12 a id_38 (Categóricas) ---
+
+Descripción general: Variables de identidad categóricas. Incluyen sistema operativo,
+navegador, tipo de pantalla, idioma, entre otros.
+Tipo: Categórica
+Observaciones: [ANON / INF] Algunas inferidas por la comunidad:
+
+id_12 — Found (si el dispositivo fue encontrado en base de datos conocida)
+id_13 — Resolución de pantalla (alto)
+id_14 — Zona horaria del dispositivo
+id_15 — Versión del sistema operativo (Found / New / Unknown)
+id_16 — Found (otra referencia cruzada)
+id_17 — Variable no revelada
+id_18 — Variable no revelada
+id_19 — Variable no revelada
+id_20 — Variable no revelada
+id_21 — Variable no revelada
+id_22 — Variable no revelada
+id_23 — Variable no revelada
+id_24 — Variable no revelada
+id_25 — Variable no revelada
+id_26 — Variable no revelada
+id_27 — Variable no revelada
+id_28 — Found / Not Found (referencia cruzada de identidad)
+id_29 — Found / Not Found
+id_30 — Sistema operativo y versión (ej. "Windows 10", "iOS 13.1")
+id_31 — Navegador web y versión (ej. "chrome 76.0", "safari 12.0")
+id_32 — Resolución de pantalla (ej. "1920x1080")
+id_33 — Resolución de pantalla alternativa
+id_34 — Variable no revelada
+id_35 — True/False (variable match no revelada)
+id_36 — True/False (variable match no revelada)
+id_37 — True/False (variable match no revelada)
+id_38 — True/False (variable match no revelada)
+
+========================================================
+VARIABLES DERIVADAS RECOMENDADAS (FEATURE ENGINEERING)
+========================================================
+
+— A partir de TransactionDT —
+- hour: hora del día (TransactionDT % 86400) // 3600
+- day_of_week: día de la semana relativo
+- is_night: 1 si la transacción ocurrió entre las 0:00 y las 6:00
+
+— A partir de TransactionAmt —
+- log_TransactionAmt: log(1 + TransactionAmt) para normalizar la distribución
+- decimal_part: parte decimal del monto (puede revelar patrones de fraude)
+- amt_round: si el monto es número redondo (ej. 100.00, 500.00)
+
+— A partir de tarjeta y dirección —
+- card_addr_freq: frecuencia de la combinación card1 + addr1 en el dataset
+- card_email_freq: frecuencia de la combinación card1 + P_emaildomain
+- uid: combinación de card1 + card2 + card3 + card5 (ID sintético de usuario)
+
+— A partir de conteos históricos —
+- card1_fraud_rate: tasa histórica de fraude asociada a card1 (target encoding)
+- addr1_fraud_rate: tasa histórica de fraude por región
+- email_fraud_rate: tasa histórica de fraude por dominio de email
+
+— A partir de identidad —
+- browser_clean: navegador agrupado desde id_31 (chrome, safari, firefox, other)
+- os_clean: sistema operativo agrupado desde id_30 (Windows, iOS, Android, Mac)
+- screen_width / screen_height: extraídos de id_32
+
+========================================================
+ÁNGULO DIFERENCIADOR PARA PORTAFOLIO (NIVEL SENIOR)
+========================================================
+
+Lo que hace que este proyecto sea de nivel senior NO es solo entrenar un modelo.
+Es cómo lo presentas y qué preguntas de negocio respondes:
+
+1. THRESHOLD OPTIMIZATION → No usar 0.5 por defecto.
+   Calcular el umbral óptimo basado en el costo real:
+   - Falso negativo (fraude no detectado): ~$X perdido por transacción
+   - Falso positivo (transacción legítima bloqueada): costo de fricción + pérdida de cliente
+
+2. SHAP EXPLAINABILITY → ¿Por qué este modelo marcó esta transacción como fraude?
+   Gráficos SHAP force plot para transacciones individuales.
+   Útil para simular cómo lo usaría un analista de fraude real.
+
+3. ANÁLISIS DE RECALL POR DECIL → Curvas de ganancia acumulada.
+   "Si revisamos el 10% de transacciones más sospechosas, ¿qué % del fraude capturamos?"
+
+4. COMPARACIÓN DE MODELOS → XGBoost vs LightGBM vs Random Forest con métricas de negocio.
+
+5. SIMULACIÓN DE AHORRO → "Con este modelo, la empresa habría ahorrado $X en fraude."
+
+========================================================
+FIN DEL DICCIONARIO
+========================================================

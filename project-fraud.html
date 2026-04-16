@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard de Análisis de Fraude | Daniel Salgado</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;background:#060e20;color:#dee5ff;overflow-x:hidden;min-height:100vh}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:#060e20}
+  ::-webkit-scrollbar-thumb{background:#40485d;border-radius:2px}
+  #bg-canvas{position:fixed;inset:0;pointer-events:none;opacity:0.25;z-index:0}
+  .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+  .orb-1{width:40%;height:40%;top:-10%;left:-10%;background:#72dcff;opacity:.08;animation:orb-float1 8s ease-in-out infinite}
+  .orb-2{width:30%;height:30%;bottom:-10%;right:-10%;background:#ac8aff;opacity:.07;animation:orb-float2 10s ease-in-out infinite}
+  @keyframes orb-float1{0%,100%{transform:translate(0,0)}50%{transform:translate(5%,8%)}}
+  @keyframes orb-float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-6%,-5%)}}
+  #navbar{background:rgba(6,14,32,.92);border-bottom:1px solid rgba(64,72,93,.3);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:sticky;top:0;z-index:50}
+  #content-wrap{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:3rem 1.5rem 5rem}
+  #md-content h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.75rem,4vw,2.5rem);font-weight:700;letter-spacing:-.03em;line-height:1.1;color:#dee5ff;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(64,72,93,.4)}
+  #md-content h2{font-family:'Space Grotesk',sans-serif;font-size:1.375rem;font-weight:700;letter-spacing:-.02em;color:#72dcff;margin:2.5rem 0 1rem;padding-left:.75rem;border-left:2px solid #72dcff}
+  #md-content h3{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;color:#69f6b8;margin:1.75rem 0 .625rem}
+  #md-content h4{font-family:'Space Grotesk',sans-serif;font-size:.9375rem;font-weight:600;color:#ac8aff;margin:1.25rem 0 .5rem}
+  #md-content p{font-size:.9375rem;line-height:1.75;color:#a3aac4;margin-bottom:1rem}
+  #md-content ul,#md-content ol{padding-left:1.5rem;margin-bottom:1rem}
+  #md-content li{font-size:.9375rem;line-height:1.75;color:#a3aac4;margin-bottom:.25rem}
+  #md-content li::marker{color:#72dcff}
+  #md-content strong{color:#dee5ff;font-weight:600}
+  #md-content em{color:#ac8aff;font-style:italic}
+  #md-content code{font-family:'Courier New',monospace;font-size:.8125rem;background:#0f1930;color:#69f6b8;padding:.15rem .4rem;border-radius:.25rem;border:1px solid rgba(105,246,184,.15)}
+  #md-content pre{background:#091328;border:1px solid #192540;border-radius:.5rem;padding:1.25rem;overflow-x:auto;margin:1.25rem 0}
+  #md-content pre code{background:none;border:none;padding:0;font-size:.8125rem;color:#69f6b8}
+  #md-content blockquote{border-left:3px solid #72dcff;padding:1rem 1.25rem;margin:1.5rem 0;background:rgba(114,220,255,.04);border-radius:0 .375rem .375rem 0}
+  #md-content blockquote p{color:#a3aac4;margin:0;font-style:italic}
+  #md-content table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.875rem}
+  #md-content th{background:#141f38;color:#72dcff;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;padding:.75rem 1rem;text-align:left;border-bottom:1px solid #40485d}
+  #md-content td{padding:.625rem 1rem;border-bottom:1px solid rgba(64,72,93,.3);color:#a3aac4}
+  #md-content tr:last-child td{border-bottom:none}
+  #md-content tr:hover td{background:rgba(114,220,255,.03)}
+  #md-content hr{border:none;border-top:1px solid #192540;margin:2.5rem 0}
+  #md-content a{color:#72dcff;text-decoration:none;border-bottom:1px solid rgba(114,220,255,.3);transition:border-color .2s,color .2s}
+  #md-content a:hover{color:#69f6b8;border-color:rgba(105,246,184,.5)}
+  #md-content img{max-width:100%;border-radius:.5rem;margin:1rem 0}
+  #loader{position:fixed;inset:0;z-index:100;background:#060e20;display:flex;align-items:center;justify-content:center;transition:opacity .4s}
+  #loader.hidden{opacity:0;pointer-events:none}
+  .loader-ring{width:40px;height:40px;border:1px solid #40485d;border-top-color:#72dcff;border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .back-btn{display:inline-flex;align-items:center;gap:.5rem;color:#a3aac4;text-decoration:none;font-family:'Space Grotesk',sans-serif;font-size:.8125rem;font-weight:500;padding:.5rem 1rem;border:1px solid rgba(64,72,93,.5);border-radius:.25rem;transition:color .2s,border-color .2s,background .2s}
+  .back-btn:hover{color:#72dcff;border-color:rgba(114,220,255,.4);background:rgba(114,220,255,.05)}
+  .back-btn svg{transition:transform .2s}
+  .back-btn:hover svg{transform:translateX(-3px)}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="loader-ring"></div></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<canvas id="bg-canvas"></canvas>
+
+<nav id="navbar">
+  <div style="max-width:800px;margin:0 auto;padding:.875rem 1.5rem;display:flex;justify-content:space-between;align-items:center">
+    <a href="index.html" style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#dee5ff;text-decoration:none;letter-spacing:-.01em">Daniel Salgado</a>
+    <a class="back-btn" href="index.html">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      Volver al portfolio
+    </a>
+  </div>
+</nav>
+
+<div id="content-wrap">
+  <div id="md-content"></div>
+</div>
+
+<script type="text/markdown" id="md-source">
+# Dashboard de Análisis de Fraude
+## Detección y Análisis de Fraude en E-Commerce — Nivel Senior
+
+---
+
+## Resumen Ejecutivo
+
+Diseñé y ejecuté un análisis completo de fraude sobre 590,540 transacciones reales de e-commerce (Vesta Corporation), combinando exploración de datos, visualización ejecutiva y análisis financiero de costo. El resultado es un sistema de análisis interactivo que va más allá de métricas técnicas y habla el lenguaje del negocio: **¿cuánto cuesta el fraude y cómo minimizarlo?**
+
+---
+
+## El Problema
+
+Vesta Corporation procesa pagos de e-commerce y necesita detectar el 3.5% de transacciones fraudulentas sin bloquear al 96.5% de clientes legítimos. Este es el problema clásico del desbalance severo en fraude financiero, con una complicación adicional: **los dos tipos de error tienen costos radicalmente distintos.**
+
+Un fraude no detectado puede costar el 100% del monto de la transacción. Bloquear a un cliente legítimo cuesta fricción, pérdida de confianza y riesgo de churn — quizás un 10% del monto. Esta asimetría define toda la estrategia de decisión.
+
+---
+
+## Enfoque y Metodología
+
+Construí el proyecto en 4 capas de análisis progresivas:
+
+**Capa 1 — Auditoría de Datos (NB01)**
+Entendí la estructura del dataset antes de tocar números: calidad de datos por grupo de variables, tasas de nulos con implicación de negocio, perfil estadístico de fraude vs. legítima. Establecí que los nulos en variables de identidad no son errores — son señal (solo el 24% de las transacciones tienen datos de dispositivo).
+
+**Capa 2 — ¿Cuándo ocurre el fraude? (NB02)**
+Extraje dimensiones temporales desde `TransactionDT` (un timedelta en segundos) para construir un mapa de calor hora × día de la semana. Identifiqué que el horario nocturno (0h–5h) tiene una tasa de fraude significativamente superior — patrón consistente con ataques automatizados mientras el titular de la tarjeta duerme.
+
+**Capa 3 — ¿Dónde y en qué segmento? (NB03)**
+Analicé el fraude por tipo de producto, red de tarjeta, tipo de tarjeta, dominio de email y región geográfica. La clave: no solo "qué variable tiene más fraude" sino **el riesgo relativo vs. el promedio global** (risk ratio), que permite priorizar intervenciones de negocio.
+
+**Capa 4 — ¿Cuánto cuesta y cómo optimizarlo? (NB04 — Senior)**
+Construí un marco de costos explícito, entrené un modelo de scoring con Random Forest, y calculé la curva de costo total en función del umbral de decisión. El hallazgo central: **el umbral óptimo no es 0.5** — ajustarlo correctamente puede representar un ahorro de varios millones de dólares por período.
+
+---
+
+## Hallazgos Más Relevantes
+
+> "Revisar el 10% de transacciones más sospechosas captura más del 60% del fraude total — un lift de 6x sobre el aleatorio."
+
+| Hallazgo | Impacto |
+|---|---|
+| Fraude nocturno (0h–5h) × mayor tasa | Habilita alertas automáticas por horario sin impactar experiencia diurna |
+| Productos C y R con riesgo 2x | Permite dedicar mayor fricción de verificación a esas categorías |
+| Dominios de email inusuales con riesgo 3–5x | Regla de negocio directa: escalar revisión para emails desconocidos |
+| Umbral óptimo ≈ 0.15–0.25 (no 0.5) | Ajustar el umbral reduce costos sin entrenar un nuevo modelo |
+| Lift de 6–8x en top decil | El equipo de fraude puede ser 6x más eficiente priorizando por score |
+
+---
+
+## Producto Final
+
+Además de los 4 notebooks de análisis, construí un **Dashboard Streamlit interactivo** con:
+
+- Resumen ejecutivo con KPIs en tiempo real
+- Análisis temporal con heatmap día × hora interactivo
+- Segmentación por producto, tarjeta, email y región con filtros dinámicos
+- **Simulador de costo con sliders ajustables** — el usuario puede cambiar los supuestos de costo FN/FP y ver cómo cambia el umbral óptimo en tiempo real
+
+Esto convierte el análisis en una **herramienta operativa** que un equipo de riesgo puede usar directamente.
+
+---
+
+## Habilidades Demostradas
+
+| Área | Habilidades |
+|---|---|
+| **Datos** | Manejo de datasets de alta dimensionalidad (435 columnas), JOINs, nulos MNAR, desbalance severo |
+| **Análisis** | EDA multidimensional, análisis temporal, segmentación, risk ratio, análisis de decil |
+| **Modelado** | Random Forest con class_weight, target encoding, threshold optimization |
+| **Negocio** | Marco de costos, curva de ganancia, simulación de ahorro, lift analysis |
+| **Producto** | Dashboard interactivo con Plotly + Streamlit, exportación modular de datos |
+| **Comunicación** | Todos los outputs orientados a stakeholders no técnicos, no a métricas de modelo |
+
+---
+
+## Por Qué Este Proyecto Destaca
+
+La mayoría de proyectos de fraude en portafolio entrenan un modelo, reportan el AUC y terminan. Este proyecto hace algo diferente: **traduce los errores del modelo a dólares perdidos** y demuestra que la decisión de umbral no es técnica — es financiera.
+
+Esto es exactamente lo que hace un analista senior en un equipo de riesgo real:
+1. Entiende el negocio antes de tocar datos
+2. Cuantifica el impacto, no solo describe patrones
+3. Entrega herramientas que el equipo puede operar, no solo reportes estáticos
+4. Habla en el lenguaje del CFO y del equipo de operaciones simultáneamente
+
+---
+
+## Próximos Pasos (Posibles Extensiones)
+
+- **SHAP Explainability:** Agregar explicaciones por transacción individual ("¿por qué esta tx fue marcada como fraude?") — esencial en contextos regulatorios
+- **Drift Monitoring:** Detectar cuándo el modelo empieza a degradarse al monitorear la distribución de scores semana a semana
+- **Reglas de Negocio Automatizadas:** Convertir los hallazgos del EDA en reglas codificadas
+- **API de Scoring en Tiempo Real:** Empaquetar el modelo en una API FastAPI con latencia <100ms
+
+---
+
+## Stack
+
+`Python` · `Pandas` · `Scikit-learn` · `Plotly` · `Streamlit` · `Jupyter` · `Matplotlib` · `Seaborn`
+
+**Dataset:** IEEE-CIS Fraud Detection — Kaggle
+
+---
+
+*Data Analyst Portfolio Project · Análisis end-to-end con orientación a negocio*
+
+---
+
+## Repositorio
+
+[Ver código completo en GitHub →](https://github.com/futbolforall34-lab/ecommerce-fraud-detection)
+</script>
+
+<script>
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  const COLORS = ['rgba(114,220,255,','rgba(105,246,184,','rgba(172,138,255,'];
+  for (let i = 0; i < 50; i++) {
+    particles.push({
+      x: Math.random()*W, y: Math.random()*H,
+      vx: (Math.random()-.5)*.3, vy: (Math.random()-.5)*.3,
+      r: Math.random()*1.5+.5,
+      color: COLORS[Math.floor(Math.random()*COLORS.length)],
+      opacity: Math.random()*.35+.1
+    });
+  }
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0) p.x=W; if(p.x>W) p.x=0;
+      if(p.y<0) p.y=H; if(p.y>H) p.y=0;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = p.color+p.opacity+')'; ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+const md = document.getElementById('md-source').textContent;
+document.getElementById('md-content').innerHTML = marked.parse(md);
+document.getElementById('loader').classList.add('hidden');
+</script>
+</body>
+</html>
