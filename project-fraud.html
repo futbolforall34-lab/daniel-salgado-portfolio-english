@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html class="dark" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Dashboard de Análisis de Fraude | Daniel Salgado</title>
+<title>Fraud Detection & Analysis Dashboard | Daniel Salgado</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -68,7 +68,7 @@
     <a href="index.html" style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#dee5ff;text-decoration:none;letter-spacing:-.01em">Daniel Salgado</a>
     <a class="back-btn" href="index.html">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-      Volver al portfolio
+      Back to Portfolio
     </a>
   </div>
 </nav>
@@ -78,101 +78,101 @@
 </div>
 
 <script type="text/markdown" id="md-source">
-# Dashboard de Análisis de Fraude
-## Detección y Análisis de Fraude en E-Commerce — Nivel Senior
+# Fraud Detection & Analysis Dashboard
+## E-Commerce Fraud Detection & Analysis — Senior Level
 
 ---
 
-## Resumen Ejecutivo
+## Executive Summary
 
-Diseñé y ejecuté un análisis completo de fraude sobre 590,540 transacciones reales de e-commerce (Vesta Corporation), combinando exploración de datos, visualización ejecutiva y análisis financiero de costo. El resultado es un sistema de análisis interactivo que va más allá de métricas técnicas y habla el lenguaje del negocio: **¿cuánto cuesta el fraude y cómo minimizarlo?**
-
----
-
-## El Problema
-
-Vesta Corporation procesa pagos de e-commerce y necesita detectar el 3.5% de transacciones fraudulentas sin bloquear al 96.5% de clientes legítimos. Este es el problema clásico del desbalance severo en fraude financiero, con una complicación adicional: **los dos tipos de error tienen costos radicalmente distintos.**
-
-Un fraude no detectado puede costar el 100% del monto de la transacción. Bloquear a un cliente legítimo cuesta fricción, pérdida de confianza y riesgo de churn — quizás un 10% del monto. Esta asimetría define toda la estrategia de decisión.
+I designed and executed a comprehensive fraud analysis on 590,540 real e-commerce transactions (Vesta Corporation), combining data exploration, executive visualization, and financial cost analysis. The result is an interactive analysis system that goes beyond technical metrics and speaks the language of business: **How much does fraud cost and how can we minimize it?**
 
 ---
 
-## Enfoque y Metodología
+## The Problem
 
-Construí el proyecto en 4 capas de análisis progresivas:
+Vesta Corporation processes e-commerce payments and needs to detect 3.5% of fraudulent transactions without blocking 96.5% of legitimate customers. This is the classic severe class imbalance problem in financial fraud, with an additional complication: **the two types of error have radically different costs.**
 
-**Capa 1 — Auditoría de Datos (NB01)**
-Entendí la estructura del dataset antes de tocar números: calidad de datos por grupo de variables, tasas de nulos con implicación de negocio, perfil estadístico de fraude vs. legítima. Establecí que los nulos en variables de identidad no son errores — son señal (solo el 24% de las transacciones tienen datos de dispositivo).
-
-**Capa 2 — ¿Cuándo ocurre el fraude? (NB02)**
-Extraje dimensiones temporales desde `TransactionDT` (un timedelta en segundos) para construir un mapa de calor hora × día de la semana. Identifiqué que el horario nocturno (0h–5h) tiene una tasa de fraude significativamente superior — patrón consistente con ataques automatizados mientras el titular de la tarjeta duerme.
-
-**Capa 3 — ¿Dónde y en qué segmento? (NB03)**
-Analicé el fraude por tipo de producto, red de tarjeta, tipo de tarjeta, dominio de email y región geográfica. La clave: no solo "qué variable tiene más fraude" sino **el riesgo relativo vs. el promedio global** (risk ratio), que permite priorizar intervenciones de negocio.
-
-**Capa 4 — ¿Cuánto cuesta y cómo optimizarlo? (NB04 — Senior)**
-Construí un marco de costos explícito, entrené un modelo de scoring con Random Forest, y calculé la curva de costo total en función del umbral de decisión. El hallazgo central: **el umbral óptimo no es 0.5** — ajustarlo correctamente puede representar un ahorro de varios millones de dólares por período.
+An undetected fraud can cost 100% of the transaction amount. Blocking a legitimate customer costs friction, loss of trust, and churn risk — perhaps 10% of the amount. This asymmetry defines the entire decision strategy.
 
 ---
 
-## Hallazgos Más Relevantes
+## Approach and Methodology
 
-> "Revisar el 10% de transacciones más sospechosas captura más del 60% del fraude total — un lift de 6x sobre el aleatorio."
+I built the project in 4 layers of progressive analysis:
 
-| Hallazgo | Impacto |
+**Layer 1 — Data Audit (NB01)**
+I understood the dataset structure before touching numbers: data quality by variable group, null rates with business implications, statistical profile of fraud vs. legitimate. I established that nulls in identity variables are not errors — they are signal (only 24% of transactions have device data).
+
+**Layer 2 — When does fraud occur? (NB02)**
+I extracted temporal dimensions from `TransactionDT` (a timedelta in seconds) to build a heatmap of hour × day of week. I identified that nighttime hours (0h–5h) have significantly higher fraud rates — a pattern consistent with automated attacks while the cardholder sleeps.
+
+**Layer 3 — Where and in which segment? (NB03)**
+I analyzed fraud by product type, card network, card type, email domain, and geographic region. The key: not just "which variable has more fraud" but **risk relative to the global average** (risk ratio), which allows prioritizing business interventions.
+
+**Layer 4 — How much does it cost and how to optimize? (NB04 — Senior)**
+I built an explicit cost framework, trained a scoring model with Random Forest, and calculated the total cost curve as a function of the decision threshold. The central finding: **the optimal threshold is not 0.5** — adjusting it correctly can represent savings of millions of dollars per period.
+
+---
+
+## Key Findings
+
+> "Reviewing the top 10% most suspicious transactions captures over 60% of total fraud — a 6x lift over random."
+
+| Finding | Impact |
 |---|---|
-| Fraude nocturno (0h–5h) × mayor tasa | Habilita alertas automáticas por horario sin impactar experiencia diurna |
-| Productos C y R con riesgo 2x | Permite dedicar mayor fricción de verificación a esas categorías |
-| Dominios de email inusuales con riesgo 3–5x | Regla de negocio directa: escalar revisión para emails desconocidos |
-| Umbral óptimo ≈ 0.15–0.25 (no 0.5) | Ajustar el umbral reduce costos sin entrenar un nuevo modelo |
-| Lift de 6–8x en top decil | El equipo de fraude puede ser 6x más eficiente priorizando por score |
+| Nighttime fraud (0h–5h) higher rate | Enables automated alerts by time of day without impacting daytime experience |
+| Products C and R with 2x risk | Allows dedicating more verification friction to those categories |
+| Unusual email domains with 3–5x risk | Direct business rule: escalate review for unknown emails |
+| Optimal threshold ≈ 0.15–0.25 (not 0.5) | Adjusting the threshold reduces costs without training a new model |
+| 6–8x lift in top decile | The fraud team can be 6x more efficient by prioritizing by score |
 
 ---
 
-## Producto Final
+## Final Product
 
-Además de los 4 notebooks de análisis, construí un **Dashboard Streamlit interactivo** con:
+Beyond the 4 analysis notebooks, I built an **interactive Streamlit Dashboard** with:
 
-- Resumen ejecutivo con KPIs en tiempo real
-- Análisis temporal con heatmap día × hora interactivo
-- Segmentación por producto, tarjeta, email y región con filtros dinámicos
-- **Simulador de costo con sliders ajustables** — el usuario puede cambiar los supuestos de costo FN/FP y ver cómo cambia el umbral óptimo en tiempo real
+- Executive summary with real-time KPIs
+- Temporal analysis with interactive day × hour heatmap
+- Segmentation by product, card, email, and region with dynamic filters
+- **Cost simulator with adjustable sliders** — users can change FN/FP cost assumptions and see how the optimal threshold changes in real time
 
-Esto convierte el análisis en una **herramienta operativa** que un equipo de riesgo puede usar directamente.
+This converts the analysis into an **operational tool** that a risk team can use directly.
 
 ---
 
-## Habilidades Demostradas
+## Skills Demonstrated
 
-| Área | Habilidades |
+| Area | Skills |
 |---|---|
-| **Datos** | Manejo de datasets de alta dimensionalidad (435 columnas), JOINs, nulos MNAR, desbalance severo |
-| **Análisis** | EDA multidimensional, análisis temporal, segmentación, risk ratio, análisis de decil |
-| **Modelado** | Random Forest con class_weight, target encoding, threshold optimization |
-| **Negocio** | Marco de costos, curva de ganancia, simulación de ahorro, lift analysis |
-| **Producto** | Dashboard interactivo con Plotly + Streamlit, exportación modular de datos |
-| **Comunicación** | Todos los outputs orientados a stakeholders no técnicos, no a métricas de modelo |
+| **Data** | High-dimensionality dataset handling (435 columns), JOINs, MNAR nulls, severe imbalance |
+| **Analysis** | Multidimensional EDA, temporal analysis, segmentation, risk ratio, decile analysis |
+| **Modeling** | Random Forest with class_weight, target encoding, threshold optimization |
+| **Business** | Cost framework, gain curve, savings simulation, lift analysis |
+| **Product** | Interactive dashboard with Plotly + Streamlit, modular data export |
+| **Communication** | All outputs oriented to non-technical stakeholders, not model metrics |
 
 ---
 
-## Por Qué Este Proyecto Destaca
+## Why This Project Stands Out
 
-La mayoría de proyectos de fraude en portafolio entrenan un modelo, reportan el AUC y terminan. Este proyecto hace algo diferente: **traduce los errores del modelo a dólares perdidos** y demuestra que la decisión de umbral no es técnica — es financiera.
+Most fraud projects in portfolios train a model, report the AUC, and stop. This project does something different: **it translates model errors into dollars lost** and demonstrates that the threshold decision is not technical — it's financial.
 
-Esto es exactamente lo que hace un analista senior en un equipo de riesgo real:
-1. Entiende el negocio antes de tocar datos
-2. Cuantifica el impacto, no solo describe patrones
-3. Entrega herramientas que el equipo puede operar, no solo reportes estáticos
-4. Habla en el lenguaje del CFO y del equipo de operaciones simultáneamente
+This is exactly what a senior analyst does in a real risk team:
+1. Understands the business before touching data
+2. Quantifies impact, not just describes patterns
+3. Delivers tools the team can operate, not just static reports
+4. Speaks in the language of the CFO and operations team simultaneously
 
 ---
 
-## Próximos Pasos (Posibles Extensiones)
+## Next Steps (Possible Extensions)
 
-- **SHAP Explainability:** Agregar explicaciones por transacción individual ("¿por qué esta tx fue marcada como fraude?") — esencial en contextos regulatorios
-- **Drift Monitoring:** Detectar cuándo el modelo empieza a degradarse al monitorear la distribución de scores semana a semana
-- **Reglas de Negocio Automatizadas:** Convertir los hallazgos del EDA en reglas codificadas
-- **API de Scoring en Tiempo Real:** Empaquetar el modelo en una API FastAPI con latencia <100ms
+- **SHAP Explainability:** Add explanations by individual transaction ("why was this tx marked as fraud?") — essential in regulatory contexts
+- **Drift Monitoring:** Detect when the model starts to degrade by monitoring the distribution of scores week by week
+- **Automated Business Rules:** Convert EDA findings into coded rules
+- **Real-Time Scoring API:** Package the model in a FastAPI with latency <100ms
 
 ---
 
@@ -184,7 +184,7 @@ Esto es exactamente lo que hace un analista senior en un equipo de riesgo real:
 
 ---
 
-*Data Analyst Portfolio Project · Análisis end-to-end con orientación a negocio*
+*Data Analyst Portfolio Project · End-to-end analysis with business orientation*
 
 ---
 

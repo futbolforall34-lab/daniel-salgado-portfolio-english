@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html class="dark" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Análisis de Personajes de Películas | Daniel Salgado</title>
+<title>Movie Character Analysis | Daniel Salgado</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -68,7 +68,7 @@
     <a href="index.html" style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#dee5ff;text-decoration:none;letter-spacing:-.01em">Daniel Salgado</a>
     <a class="back-btn" href="index.html">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-      Volver al portfolio
+      Back to Portfolio
     </a>
   </div>
 </nav>
@@ -78,42 +78,42 @@
 </div>
 
 <script type="text/markdown" id="md-source">
-# Análisis de Personajes de Películas
+# Movie Character Analysis
 
-## Resumen Ejecutivo
+## Executive Summary
 
-¿Podemos cuantificar el "alma" de una historia? Este proyecto transforma guiones cinematográficos en bruto en un mapa multidimensional del comportamiento de personajes. Al combinar **Deep Learning (Transformers)**, **Teoría de Grafos** y **Aprendizaje No Supervisado**, desarrollé un marco que identifica arquetipos de personajes y mapea viajes emocionales a través de la narrativa de una película.
+Can we quantify the "soul" of a story? This project transforms raw movie scripts into a multidimensional map of character behavior. By combining **Deep Learning (Transformers)**, **Graph Theory**, and **Unsupervised Learning**, I developed a framework that identifies character archetypes and maps emotional journeys through a movie's narrative.
 
-## El Desafío
+## The Challenge
 
-Los guiones son texto semiestructurado. El desafío era pasar de "líneas de diálogo" a "roles significativos", cerrando la brecha entre el diálogo crudo y las funciones narrativas de alto nivel.
+Scripts are semi-structured text. The challenge was moving from "dialogue lines" to "meaningful roles", closing the gap between raw dialogue and high-level narrative functions.
 
-## Mi Enfoque
+## My Approach
 
-Construí un motor analítico de tres capas:
+I built a three-layer analytical engine:
 
-1. **Capa Estructural:** Construí redes de interacción para ver quién "controla" la historia.
-2. **Capa Semántica:** Utilicé un transformador DistilRoBERTa para extraer un espectro de 7 emociones de cada línea de diálogo.
-3. **Capa de Patrones:** Apliqué clustering KMeans para dejar que los datos definieran "arquetipos" (por ejemplo, el "Catalizador Emocional" vs. el "Ancla Narrativa").
+1. **Structural Layer:** I built interaction networks to see who "controls" the story.
+2. **Semantic Layer:** I used a DistilRoBERTa transformer to extract a spectrum of 7 emotions from each line of dialogue.
+3. **Pattern Layer:** I applied KMeans clustering to let the data define "archetypes" (e.g., the "Emotional Catalyst" vs. the "Narrative Anchor").
 
-## Habilidades Demostradas
+## Skills Demonstrated
 
-- **NLP & Deep Learning:** Implementación de Transformers de HuggingFace para clasificación de secuencias y detección de emociones.
-- **Análisis de Redes:** Uso de `NetworkX` para calcular centralidad y modelar dinámicas sociales.
-- **Machine Learning:** Ingeniería de características y clustering no supervisado (KMeans) con visualización PCA.
-- **Ingeniería de Datos:** Construcción de un pipeline robusto desde archivos `.txt` en bruto hasta datasets procesados en `.parquet`.
+- **NLP & Deep Learning:** Implementation of HuggingFace Transformers for sequence classification and emotion detection.
+- **Network Analysis:** Use of `NetworkX` to calculate centrality and model social dynamics.
+- **Machine Learning:** Feature engineering and unsupervised clustering (KMeans) with PCA visualization.
+- **Data Engineering:** Building a robust pipeline from raw `.txt` files to processed `.parquet` datasets.
 
-## Resultados Impactantes
+## Impactful Results
 
-- **Descubrimiento de Arquetipos:** Agrupé automáticamente personajes en 5 roles distintos basados en comportamiento e importancia.
-- **Arcos Emocionales:** Mapeé la evolución psicológica de personajes, revelando cambios de estabilidad a vulnerabilidad.
-- **Validación Narrativa:** Probé que la centralidad estructural (quién habla con quién) y la importancia narrativa (quién habla más) son dimensiones relacionadas pero distintas del rol de un personaje.
+- **Archetype Discovery:** I automatically grouped characters into 5 distinct roles based on behavior and importance.
+- **Emotional Arcs:** I mapped the psychological evolution of characters, revealing shifts from stability to vulnerability.
+- **Narrative Validation:** I proved that structural centrality (who talks to whom) and narrative importance (who talks more) are related but distinct dimensions of a character's role.
 
-## Próximos Pasos
+## Next Steps
 
-- **Benchmarking por Género:** Comparar arquetipos de "Héroe" entre películas de Acción vs. Drama.
-- **Dashboard en Tiempo Real:** Crear una herramienta interactiva para escritores visualizar el equilibrio emocional de sus guiones.
-- **Detección de Puntos de Trama:** Usar picos emocionales para detectar automáticamente el "clímax" de una historia.
+- **Genre Benchmarking:** Compare "Hero" archetypes between Action vs. Drama movies.
+- **Real-Time Dashboard:** Create an interactive tool for writers to visualize the emotional balance of their scripts.
+- **Plot Point Detection:** Use emotional spikes to automatically detect a story's "climax".
 
 ---
 

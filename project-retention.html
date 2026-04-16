@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html class="dark" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Optimizador de Estrategia de Retención | Daniel Salgado</title>
+<title>Retention Strategy Optimizer | Daniel Salgado</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -68,7 +68,7 @@
     <a href="index.html" style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#dee5ff;text-decoration:none;letter-spacing:-.01em">Daniel Salgado</a>
     <a class="back-btn" href="index.html">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-      Volver al portfolio
+      Back to Portfolio
     </a>
   </div>
 </nav>
@@ -78,150 +78,150 @@
 </div>
 
 <script type="text/markdown" id="md-source">
-# Optimizador de Estrategia de Retención
-### People Analytics — Predicción y Prevención de Rotación de Empleados
+# Retention Strategy Optimizer
+### People Analytics — Employee Churn Prediction and Prevention
 
 ---
 
-## Resumen Ejecutivo
+## Executive Summary
 
-Una empresa tecnológica con casi 15,000 empleados enfrenta una tasa de rotación del 23.8% — equivalente a perder 3,522 empleados al año a un costo estimado de $176 millones USD anuales.
+A technology company with nearly 15,000 employees faces a churn rate of 23.8% — equivalent to losing 3,522 employees per year at an estimated cost of $176 million USD annually.
 
-Construí un sistema end-to-end de People Analytics que va más allá de predecir quién se va: **explica por qué se van y simula el impacto financiero de cada intervención posible antes de implementarla**.
+I built an end-to-end People Analytics system that goes beyond predicting who leaves: **it explains why they leave and simulates the financial impact of each possible intervention before implementing it**.
 
-El resultado: un programa de retención que reduce la rotación en un 53.8% y genera un ahorro potencial de **$94.8 millones USD** con un ROI del 9,879%.
-
----
-
-## El Problema de Negocio
-
-La mayoría de las empresas abordan la rotación de manera reactiva: esperan a que alguien renuncie para actuar. El costo de esa espera es enorme.
-
-Pero hay un problema más profundo: **los mejores empleados son los primeros en irse**. No por insatisfacción genérica, sino porque la empresa los está sobreexplotando sin reconocerlos.
-
-El análisis reveló que empleados con excelente evaluación pero baja satisfacción tienen una tasa de rotación del **84.7%** — casi cuatro veces el promedio. Son los más valiosos y los que más riesgo tienen de salida.
+The result: a retention program that reduces churn by 53.8% and generates potential savings of **$94.8 million USD** with an ROI of 9,879%.
 
 ---
 
-## El Descubrimiento Clave: Dos Tipos de Rotación
+## The Business Problem
 
-El EDA reveló una estructura bifurcada que no era evidente en la correlación lineal:
+Most companies approach churn reactively: they wait for someone to quit before acting. The cost of that wait is enormous.
 
-**Tipo 1 — Rotación por Insatisfacción** (satisfacción < 0.4)
-- Empleados agotados, mal compensados, ignorados
-- Tasa de rotación: 44-58%
-- Señales: pocas horas O muchas horas, salario bajo
+But there's a deeper problem: **the best employees are the first to leave**. Not from generic dissatisfaction, but because the company is overexploiting them without recognition.
 
-**Tipo 2 — Rotación por Oportunidad** (evaluación > 0.8, satisfacción < 0.5)
-- Los mejores empleados, explotados y no reconocidos
-- Tasa de rotación: **84.7%**
-- Señales: alta evaluación + muy pocas promociones + muchos proyectos
-
-Esta bifurcación cambió completamente la estrategia. Para el Tipo 1 se necesita intervención de compensación; para el Tipo 2, reconocimiento y plan de carrera. Tratarlos igual sería un error costoso.
+The analysis revealed that employees with excellent ratings but low satisfaction have a churn rate of **84.7%** — nearly four times the average. They are the most valuable and the most at risk of departure.
 
 ---
 
-## Metodología
+## The Key Discovery: Two Types of Churn
 
-### Pipeline de 5 Notebooks
+The EDA revealed a bifurcated structure that wasn't evident in linear correlation:
+
+**Type 1 — Dissatisfaction Churn** (satisfaction < 0.4)
+- Burned out, underpaid, ignored employees
+- Churn rate: 44-58%
+- Signals: few hours OR many hours, low salary
+
+**Type 2 — Opportunity Churn** (evaluation > 0.8, satisfaction < 0.5)
+- The best employees, exploited and unrecognized
+- Churn rate: **84.7%**
+- Signals: high evaluation + very few promotions + many projects
+
+This bifurcation completely changed the strategy. Type 1 needs compensation intervention; Type 2 needs recognition and career planning. Treating them the same would be a costly mistake.
+
+---
+
+## Methodology
+
+### 5-Notebook Pipeline
 
 ```
-NB01: Auditoría → NB02: EDA → NB03: Features + Clusters → NB04: Modelo → NB05: SHAP + ROI
+NB01: Audit → NB02: EDA → NB03: Features + Clusters → NB04: Model → NB05: SHAP + ROI
 ```
 
-**NB01 — Auditoría de datos**
-Dataset completo (0 nulos), pero con señales sistémicas preocupantes: solo 2.1% de empleados fue promovido en 5 años; media de 201 horas mensuales (estándar: 160).
+**NB01 — Data Audit**
+Complete dataset (0 nulls), but with concerning systemic signals: only 2.1% of employees promoted in 5 years; average of 201 monthly hours (standard: 160).
 
-**NB02 — EDA narrativo**
-Validé 4 hipótesis de negocio. El hallazgo más importante: la variable `last_evaluation` tiene correlación ~0 con la rotación en análisis lineal, pero un efecto enorme cuando se combina condicionalmente con `satisfaction_level`. Los modelos lineales fallan aquí.
+**NB02 — Narrative EDA**
+I validated 4 business hypotheses. The most important finding: the `last_evaluation` variable has ~0 correlation with churn in linear analysis, but a massive effect when conditionally combined with `satisfaction_level`. Linear models fail here.
 
 **NB03 — Feature engineering + clustering**
-Creé 4 variables derivadas que capturan las interacciones descubiertas en el EDA:
-- `top_performer_risk`: lift 3.56x
-- `burnout_risk`: lift 2.57x
-- `stagnation_flag`: lift 2.08x
-- `overload_flag`: lift 1.69x
+I created 4 derived variables that capture the interactions discovered in the EDA:
+- `top_performer_risk`: 3.56x lift
+- `burnout_risk`: 2.57x lift
+- `stagnation_flag`: 2.08x lift
+- `overload_flag`: 1.69x lift
 
-K-Means con K=3 identificó tres perfiles nítidos de empleados, con tasas de rotación de 8%, 25% y 74%.
+K-Means with K=3 identified three sharp employee profiles, with churn rates of 8%, 25%, and 74%.
 
-**NB04 — Modelado predictivo**
-Comparé tres modelos. La Regresión Logística confirmó la no-linealidad del problema (AUC 0.78). XGBoost con validación cruzada 5-Fold y GridSearch logró:
+**NB04 — Predictive Modeling**
+I compared three models. Logistic Regression confirmed the non-linearity of the problem (AUC 0.78). XGBoost with 5-Fold cross-validation and GridSearch achieved:
 - ROC-AUC: **0.987**
 - F1-Score: **0.850**
-- Recall: **0.863** (captura 86% de rotaciones reales)
+- Recall: **0.863** (captures 86% of actual churn)
 
-El threshold fue ajustado a 0.38 (vs. 0.5 default) para maximizar recall — en RRHH, una falsa alarma cuesta una conversación; un falso negativo cuesta perder talento.
+The threshold was adjusted to 0.38 (vs. 0.5 default) to maximize recall — in HR, a false alarm costs a conversation; a false negative costs losing talent.
 
-**NB05 — SHAP + simulador económico**
-SHAP permite decirle a RRHH exactamente por qué cada empleado está en riesgo. Para el perfil de alto riesgo típico:
+**NB05 — SHAP + Economic Simulator**
+SHAP allows us to tell HR exactly why each employee is at risk. For a typical high-risk profile:
 
-*"Este empleado tiene 94% de probabilidad de irse. Su satisfacción baja (SHAP +0.85) combinada con su excelente evaluación (+0.81) y 264 horas mensuales (+0.61) son los factores principales. Necesita revisión salarial, redistribución de carga y un plan de carrera concreto."*
+*"This employee has a 94% probability of leaving. Their low satisfaction (SHAP +0.85) combined with their excellent rating (+0.81) and 264 monthly hours (+0.61) are the main factors. They need a salary review, workload redistribution, and a concrete career plan."*
 
 ---
 
-## Habilidades Demostradas
+## Skills Demonstrated
 
-### Técnicas
-- Machine Learning end-to-end (EDA → features → model → interpret → deploy)
-- XGBoost con optimización de hiperparámetros (GridSearchCV)
-- Validación cruzada estratificada (Stratified K-Fold)
-- SHAP values para interpretabilidad (global + individual)
-- K-Means clustering con selección de K por Silhouette Score
-- Feature engineering con validación de lift
-- Manejo de desbalance de clases (scale_pos_weight, threshold tuning)
+### Technical
+- End-to-end Machine Learning (EDA → features → model → interpret → deploy)
+- XGBoost with hyperparameter optimization (GridSearchCV)
+- Stratified cross-validation (Stratified K-Fold)
+- SHAP values for interpretability (global + individual)
+- K-Means clustering with K selection by Silhouette Score
+- Feature engineering with lift validation
+- Handling class imbalance (scale_pos_weight, threshold tuning)
 
-### De Negocio
-- Traducción de métricas técnicas a impacto financiero cuantificado
-- Simulación de escenarios con ROI estimado por intervención
-- Segmentación de empleados accionable por RRHH
-- Detección de relaciones no lineales que análisis básico no captura
-- Priorización estratégica de intervenciones por costo-beneficio
+### Business
+- Translation of technical metrics to quantified financial impact
+- Scenario simulation with estimated ROI per intervention
+- Actionable employee segmentation for HR
+- Detection of non-linear relationships that basic analysis misses
+- Strategic prioritization of interventions by cost-benefit
 
-### Stack Técnico
+### Technical Stack
 `Python` `XGBoost` `SHAP` `Scikit-learn` `K-Means` `Pandas` `Matplotlib` `Seaborn` `Streamlit` `Joblib`
 
 ---
 
-## Resultados en Números
+## Results in Numbers
 
-| Métrica | Valor |
+| Metric | Value |
 |---------|-------|
 | ROC-AUC | 0.987 |
 | F1-Score | 0.850 |
-| Recall | 86.3% — captura 86 de cada 100 rotaciones |
-| Precision | 83.7% — 84% de alertas son válidas |
-| Reducción potencial de rotación | -53.8% con programa combinado |
-| Ahorro estimado | $94.8M USD anuales |
-| ROI del programa | 9,879% |
+| Recall | 86.3% — captures 86 out of 100 churn cases |
+| Precision | 83.7% — 84% of alerts are valid |
+| Potential churn reduction | -53.8% with combined program |
+| Estimated savings | $94.8M USD annually |
+| Program ROI | 9,879% |
 
 ---
 
-## Lo que Hace Diferente Este Proyecto
+## What Makes This Project Different
 
-**1. Narrativa de negocio, no solo métricas**
-Cada output tiene interpretación. No solo "ROC-AUC = 0.987" sino "el modelo puede identificar correctamente si un empleado se va o se queda el 98.7% de las veces cuando compara dos casos al azar".
+**1. Business narrative, not just metrics**
+Every output has interpretation. Not just "ROC-AUC = 0.987" but "the model can correctly identify whether an employee will leave or stay 98.7% of the time when comparing two random cases".
 
-**2. Decisiones documentadas con razonamiento**
-¿Por qué threshold 0.38 y no 0.5? ¿Por qué conservar duplicados? ¿Por qué XGBoost y no Random Forest? Cada decisión tiene su justificación de negocio.
+**2. Documented decisions with reasoning**
+Why threshold 0.38 and not 0.5? Why keep duplicates? Why XGBoost and not Random Forest? Each decision has its business justification.
 
-**3. SHAP como herramienta de conversación**
-La interpretabilidad no es un lujo técnico — es lo que permite que RRHH use el modelo. Sin SHAP, el modelo es una caja negra con un número. Con SHAP, es un asesor que explica qué está pasando con cada empleado.
+**3. SHAP as a conversation tool**
+Interpretability is not a technical luxury — it's what allows HR to use the model. Without SHAP, the model is a black box with a number. With SHAP, it's an advisor that explains what's happening with each employee.
 
-**4. Valor económico cuantificado**
-El análisis no termina en "el modelo funciona bien". Termina en "esta intervención específica, dirigida a este segmento, generará este ROI en este plazo".
-
----
-
-## Próximos Pasos
-
-1. **Datos longitudinales:** Incorporar datos de encuestas de engagement mensuales para detectar cambios antes de que cristalicen en decisiones de salida
-2. **Modelo de supervivencia (Cox Regression):** Predecir no solo *si* un empleado se va, sino *cuándo*
-3. **Análisis causal:** El simulador asume causalidad. Un diseño causal formal (DiD o PSM) permitiría validar que las intervenciones realmente causan la reducción estimada
-4. **Deploy en producción:** Integración con sistemas de RRHH (Workday, SAP HCM) para score automático mensual por empleado
+**4. Quantified economic value**
+The analysis doesn't end at "the model works well". It ends at "this specific intervention, aimed at this segment, will generate this ROI in this timeframe".
 
 ---
 
-*Portfolio project — Dataset público de Kaggle*
+## Next Steps
+
+1. **Longitudinal data:** Incorporate monthly engagement survey data to detect changes before they crystallize into exit decisions
+2. **Survival model (Cox Regression):** Predict not just *if* an employee will leave, but *when*
+3. **Causal analysis:** The simulator assumes causality. A formal causal design (DiD or PSM) would allow validating that interventions really cause the estimated reduction
+4. **Production deployment:** Integration with HR systems (Workday, SAP HCM) for automatic monthly scoring per employee
+
+---
+
+*Portfolio project — Public Dataset from Kaggle*
 </script>
 
 <script>

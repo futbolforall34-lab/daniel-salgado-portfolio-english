@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html class="dark" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Tendencias de Streaming en YouTube | Daniel Salgado</title>
+<title>YouTube Streaming Trends | Daniel Salgado</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -68,7 +68,7 @@
     <a href="index.html" style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#dee5ff;text-decoration:none;letter-spacing:-.01em">Daniel Salgado</a>
     <a class="back-btn" href="index.html">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-      Volver al portfolio
+      Back to Portfolio
     </a>
   </div>
 </nav>
@@ -78,42 +78,42 @@
 </div>
 
 <script type="text/markdown" id="md-source">
-# Tendencias de Streaming en YouTube
+# YouTube Streaming Trends
 
-## Resumen Ejecutivo
+## Executive Summary
 
-¿Podemos cuantificar cuánto tiempo un video permanecerá visible en las tendencias? Este proyecto analiza más de 537,000 registros de videos en tendencia de YouTube en México y Estados Unidos (2020–2024) para construir un modelo que predice cuántos días durará un video en el ranking.
+Can we quantify how long a video will stay visible in trending? This project analyzes over 537,000 records of YouTube trending videos in Mexico and the United States (2020–2024) to build a model that predicts how many days a video will stay in the ranking.
 
-## El Desafío
+## The Challenge
 
-El algoritmo de tendencias de YouTube distribuye aproximadamente 200 videos diarios por país en una lista altamente visible. Para un creador o marca, estar en tendencias puede significar millones de visualizaciones adicionales, pero la duración en el ranking determina el alcance total.
+YouTube's trending algorithm distributes approximately 200 videos daily per country on a highly visible list. For a creator or brand, being in trends can mean millions of additional views, but the duration in the ranking determines the total reach.
 
-## Mi Enfoque
+## My Approach
 
-Construí un motor analítico multidimensional:
+I built a multidimensional analytical engine:
 
-1. **Ingeniería de Características:** Extraje 24 variables desde señales de primer día (engagement, temporales, contenido del título, SEO).
-2. **Análisis Comparativo:** Identifiqué diferencias estructurales entre mercados (México dominado por Entretenimiento y Música; EE.UU. por Gaming).
-3. **Modelado Predictivo:** Entré modelos con LightGBM, logrando R² de 0.39 y MAE de 1.43 días.
+1. **Feature Engineering:** I extracted 24 variables from first-day signals (engagement, temporal, title content, SEO).
+2. **Comparative Analysis:** I identified structural differences between markets (Mexico dominated by Entertainment and Music; US by Gaming).
+3. **Predictive Modeling:** I trained models with LightGBM, achieving R² of 0.39 and MAE of 1.43 days.
 
-## Habilidades Demostradas
+## Skills Demonstrated
 
-- **Feature Engineering:** Transformaciones logarítmicas, ratios, análisis NLP básico de títulos, features temporales.
-- **Modelado Predictivo:** LightGBM, Ridge Regression, validación cruzada, early stopping.
-- **Interpretabilidad:** SHAP TreeExplainer para explicar predicciones individuales.
-- **Análisis de Datos:** Construcción de targets robustos, manejo de gaps en datos, análisis multidimensional.
+- **Feature Engineering:** Logarithmic transformations, ratios, basic NLP analysis of titles, temporal features.
+- **Predictive Modeling:** LightGBM, Ridge Regression, cross-validation, early stopping.
+- **Interpretability:** SHAP TreeExplainer to explain individual predictions.
+- **Data Analysis:** Building robust targets, handling data gaps, multidimensional analysis.
 
-## Resultados Impactantes
+## Impactful Results
 
-- **Descubrimiento Regional:** Videos en México permanecen en tendencias 60% más tiempo que en EE.UU. (mediana 8 vs 5 días).
-- **Factor Crítico:** El engagement del día 1 es el predictor dominante en ambos mercados.
-- **Playbook de Creadores:** Títulos más cortos, viralización inmediata y contenido de Music/Entertainment predicen mayor durabilidad.
+- **Regional Discovery:** Videos in Mexico stay in trends 60% longer than in the US (median 8 vs 5 days).
+- **Critical Factor:** Day 1 engagement is the dominant predictor in both markets.
+- **Creator Playbook:** Shorter titles, immediate virality, and Music/Entertainment content predict greater durability.
 
-## Próximos Pasos
+## Next Steps
 
-- **NLP Semántico:** Embeddings de sentence-transformers multilingües para análisis más profundo de títulos.
-- **Channel Features:** Agregar historial del canal como predictor adicional.
-- **Computer Vision:** Análisis de thumbnails para features visuales.
+- **Semantic NLP:** Multilingual sentence-transformers embeddings for deeper title analysis.
+- **Channel Features:** Add channel history as an additional predictor.
+- **Computer Vision:** Thumbnail analysis for visual features.
 
 ---
 

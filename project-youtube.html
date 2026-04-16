@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html class="dark" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Durabilidad en Tendencias de YouTube | Daniel Salgado</title>
+<title>YouTube Trending Durability | Daniel Salgado</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -68,7 +68,7 @@
     <a href="index.html" style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#dee5ff;text-decoration:none;letter-spacing:-.01em">Daniel Salgado</a>
     <a class="back-btn" href="index.html">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-      Volver al portfolio
+      Back to Portfolio
     </a>
   </div>
 </nav>
@@ -78,165 +78,165 @@
 </div>
 
 <script type="text/markdown" id="md-source">
-# ¿Qué hace que un video dure en trending? — Análisis predictivo YouTube MX vs US
+# What Makes Videos Last in Trending? — Predictive Analysis YouTube MX vs US
 
-> *Un proyecto end-to-end de ciencia de datos que combina feature engineering, modelado con LightGBM y análisis de interpretabilidad (SHAP) para responder una pregunta de negocio concreta sobre el mercado de contenido digital.*
-
----
-
-## Resumen Ejecutivo
-
-Analicé **537,000+ registros** de videos trending en YouTube de México y Estados Unidos (2020–2024) para construir un modelo que predice cuántos días permanecerá un video en el ranking de trending, usando solo las señales disponibles en su primer día de aparición.
-
-El modelo final (LightGBM entrenado con datos combinados) logra un **R² de 0.39** y un **MAE de 1.43 días** — una mejora sustancial sobre el baseline y con hallazgos accionables para creadores de contenido, marcas y plataformas.
-
-**Hallazgo principal:** Los videos en México permanecen en trending un **60% más tiempo** que en Estados Unidos (mediana 8d vs 5d), y el engagement del día 1 es el predictor más fuerte de durabilidad en ambos mercados.
+> *An end-to-end data science project that combines feature engineering, LightGBM modeling, and interpretability analysis (SHAP) to answer a concrete business question about the digital content market.*
 
 ---
 
-## El Problema
+## Executive Summary
 
-El algoritmo de trending de YouTube distribuye ~200 videos diarios por país en una lista altamente visible. Para un creador o marca, estar en trending puede significar millones de vistas adicionales — pero la duración en el ranking determina el alcance total.
+I analyzed **537,000+ records** of YouTube trending videos from Mexico and the United States (2020–2024) to build a model that predicts how many days a video will remain in the trending ranking, using only the signals available on its first day of appearance.
 
-**Las preguntas de negocio que responde este proyecto:**
-- ¿Qué señales predicen cuánto durará un video en trending?
-- ¿Son los mismos factores en México y en Estados Unidos?
-- ¿Existe un "playbook" accionable para maximizar la durabilidad?
+The final model (LightGBM trained with combined data) achieves an **R² of 0.39** and an **MAE of 1.43 days** — a substantial improvement over the baseline with actionable findings for content creators, brands, and platforms.
+
+**Main finding:** Videos in Mexico stay in trending **60% longer** than in the United States (median 8d vs 5d), and day 1 engagement is the strongest predictor of durability in both markets.
 
 ---
 
-## Metodología
+## The Problem
 
-### Pipeline completo (5 notebooks)
+YouTube's trending algorithm distributes ~200 videos daily per country on a highly visible list. For a creator or brand, being in trending can mean millions of additional views — but the duration in the ranking determines the total reach.
+
+**The business questions this project answers:**
+- What signals predict how long a video will stay in trending?
+- Are the same factors at play in Mexico and the United States?
+- Is there an actionable "playbook" to maximize durability?
+
+---
+
+## Methodology
+
+### Complete Pipeline (5 notebooks)
 
 ```
-Auditoría de datos  →  Feature Engineering  →  EDA Comparativa  →  Modelado  →  Conclusiones
-     NB01                    NB02                   NB03             NB04          NB05
+Data Audit  →  Feature Engineering  →  Comparative EDA  →  Modeling  →  Conclusions
+    NB01             NB02                   NB03              NB04         NB05
 ```
 
-### Construcción del Target
+### Target Construction
 
-El desafío principal fue construir un target robusto. El dataset registra cada aparición diaria de un video — no su duración total. Construí `days_in_trending` como el **streak consecutivo máximo** de cada video, excluyendo los 21 días sin captura de datos que existen en el dataset. Este detalle técnico evita inflar artificialmente la durabilidad de videos que cruzaron un gap de captura.
+The main challenge was building a robust target. The dataset records each daily appearance of a video — not its total duration. I built `days_in_trending` as the **maximum consecutive streak** of each video, excluding the 21-day data capture gap that exists in the dataset. This technical detail avoids artificially inflating the durability of videos that crossed a capture gap.
 
-### Features de Entrada (24 variables)
+### Input Features (24 variables)
 
-El modelo solo usa señales del **día 1 de trending** — simulando un escenario real de predicción:
+The model only uses signals from **day 1 of trending** — simulating a real prediction scenario:
 
-| Tipo | Ejemplos |
+| Type | Examples |
 |---|---|
-| Engagement día 1 | vistas, likes, comentarios (log-transformados), like_rate |
-| Temporales | horas hasta trendar, hora de publicación, día de la semana |
-| Contenido del título | longitud, conteo de palabras, mayúsculas, signos |
-| SEO | número de tags, tiene descripción |
-| Categoría | música, gaming, entretenimiento, etc. |
+| Day 1 engagement | views, likes, comments (log-transformed), like_rate |
+| Temporal | hours to trend, publication time, day of week |
+| Title content | length, word count, capitals, punctuation |
+| SEO | number of tags, has description |
+| Category | music, gaming, entertainment, etc. |
 
 ---
 
-## Hallazgos Principales
+## Main Findings
 
-### Los mercados son estructuralmente distintos...
+### Markets are structurally different...
 
-**México** está dominado por **Entertainment (24%) y Music (22%)**, reflejando la rica cultura musical hispana — corridos, reggaetón, pop latino. **Estados Unidos** tiene **Gaming como categoría líder (20%)**, con una comunidad de streamers y gamers extremadamente activa.
+**Mexico** is dominated by **Entertainment (24%) and Music (22%)**, reflecting the rich Hispanic musical culture — corridos, reggaeton, Latin pop. **United States** has **Gaming as the leading category (20%)**, with an extremely active community of streamers and gamers.
 
-Esta diferencia estructural importa: un modelo entrenado solo en US y aplicado a MX tendría sesgos sistemáticos.
+This structural difference matters: a model trained only on US data and applied to MX would have systematic biases.
 
-### ...pero los mecanismos del algoritmo son los mismos
+### ...but the algorithm mechanisms are the same
 
-A pesar de las diferencias culturales, el **engagement del día 1** es el predictor dominante en **ambos mercados**. Los `log_likes`, `log_views` y `log_comments` del primer día encabezan la importancia SHAP en MX y US. El mecanismo subyacente es universal: YouTube premia el contenido que genera engagement inmediato.
+Despite cultural differences, **day 1 engagement** is the dominant predictor in **both markets**. The `log_likes`, `log_views`, and `log_comments` from the first day lead the SHAP importance in MX and US. The underlying mechanism is universal: YouTube rewards content that generates immediate engagement.
 
-### La velocidad de viralización predice la durabilidad
+### Viralization speed predicts durability
 
-Los videos que llegan a trending el **mismo día de publicación** (64.2% en MX, 61.3% en US) tienen durabilidades significativamente mayores. Existe una relación inversa clara: cuanto más tardó un video en llegar a trending, menos tiempo permanece ahí.
+Videos that reach trending on the **same day of publication** (64.2% in MX, 61.3% in US) have significantly longer durability. There's a clear inverse relationship: the longer a video took to reach trending, the less time it stays there.
 
-### Music y Entertainment generan contenido más duradero
+### Music and Entertainment generate longer-lasting content
 
-Los videos musicales son consumidos repetidamente — tienen built-in repeat consumption que el algoritmo interpreta como señal de relevancia sostenida. Gaming y News tienen alta rotación porque dependen de eventos actuales.
+Music videos are consumed repeatedly — they have built-in repeat consumption that the algorithm interprets as a signal of sustained relevance. Gaming and News have high rotation because they depend on current events.
 
 ---
 
-## Resultados del Modelo
+## Model Results
 
-| Modelo | R² | MAE (días) | Mejora vs baseline |
+| Model | R² | MAE (days) | Improvement vs baseline |
 |---|---|---|---|
-| Baseline (mediana) | ~ 0 | 1.75d | — |
-| Ridge Regression | 0.106 | 1.22d | moderada |
-| LightGBM (por región) | 0.27 | 1.50d | notable |
-| **LightGBM (combinado MX+US)** | **0.39** | **1.43d** | **sustancial** |
+| Baseline (median) | ~ 0 | 1.75d | — |
+| Ridge Regression | 0.106 | 1.22d | moderate |
+| LightGBM (by region) | 0.27 | 1.50d | notable |
+| **LightGBM (combined MX+US)** | **0.39** | **1.43d** | **substantial** |
 
-**Insight técnico sorprendente:** El modelo combinado (entrenado con datos de MX y US juntos) supera a los modelos por región en ~56% de R². Más datos de entrenamiento importa más que la homogeneidad del mercado, especialmente cuando añadimos un flag de región que permite al modelo aprender los efectos específicos de cada mercado.
-
----
-
-## Interpretabilidad: SHAP
-
-El análisis SHAP no solo dice *qué* features importan, sino *cómo* influyen:
-
-- **`log_likes` alto** → empuja la predicción hacia arriba (más durabilidad)
-- **`days_to_trending` alto** → empuja hacia abajo (menos durabilidad)
-- **`title_length` largo** → efecto negativo — títulos más cortos predicen mayor durabilidad
-- **`category_encoded`** → efectos bidireccionales; Music empuja hacia arriba, News es variable
+**Surprising technical insight:** The combined model (trained with data from MX and US together) outperforms region-specific models by ~56% in R². More training data matters more than market homogeneity, especially when we add a region flag that allows the model to learn the market-specific effects.
 
 ---
 
-## Recomendaciones para Creadores
+## Interpretability: SHAP
 
-### Playbook Universal (MX y US)
-1. **Maximizar engagement en las primeras 24h** — es el factor más predictivo por amplio margen
-2. **Viralización rápida > acumulación lenta** — un video que explota inmediatamente genera momentum algorítmico
-3. **Títulos concisos** (< 60 caracteres) asociados con mayor durabilidad
-4. **Like rate alto** (calidad del engagement) importa además del volumen
+SHAP analysis doesn't just say *what* features matter, but *how* they influence:
 
-### Específico para México
-- Ventana de 8 días promedio (vs 5 en US) = mayor ROI por video trending
-- Contenido de Music y Entertainment genera mayor durabilidad
-- Menor competencia (32k videos únicos vs 47k en US) = mayor probabilidad de permanecer
-
-### Específico para Estados Unidos
-- Day 1 engagement es predictor aún más fuerte en US que en MX
-- Mercado más competitivo → diferenciarse por calidad de engagement (like_rate)
+- **High `log_likes`** → pushes prediction upward (more durability)
+- **High `days_to_trending`** → pushes downward (less durability)
+- **Long `title_length`** → negative effect — shorter titles predict greater durability
+- **`category_encoded`** → bidirectional effects; Music pushes upward, News is variable
 
 ---
 
-## Habilidades Demostradas
+## Recommendations for Creators
 
-| Área | Herramientas / Técnicas |
+### Universal Playbook (MX and US)
+1. **Maximize engagement in the first 24 hours** — it's the most predictive factor by a wide margin
+2. **Fast viralization > slow accumulation** — a video that explodes immediately generates algorithmic momentum
+3. **Concise titles** (< 60 characters) associated with greater durability
+4. **High like rate** (engagement quality) matters in addition to volume
+
+### Specific to Mexico
+- Average window of 8 days (vs 5 in US) = greater ROI per trending video
+- Music and Entertainment content generates greater durability
+- Less competition (32k unique videos vs 47k in US) = greater probability of staying
+
+### Specific to United States
+- Day 1 engagement is an even stronger predictor in US than in MX
+- More competitive market → differentiate by engagement quality (like_rate)
+
+---
+
+## Skills Demonstrated
+
+| Area | Tools / Techniques |
 |---|---|
-| **Data Engineering** | Pandas, Parquet, deduplicación, manejo de timezone, gap detection |
-| **Feature Engineering** | Log-transformations, ratios, NLP básico en títulos, temporal features |
+| **Data Engineering** | Pandas, Parquet, deduplication, timezone handling, gap detection |
+| **Feature Engineering** | Log-transformations, ratios, basic NLP on titles, temporal features |
 | **Modeling** | LightGBM, Ridge, baseline, early stopping, cross-validation |
-| **Interpretabilidad** | SHAP TreeExplainer, beeswarm plots, dependence plots |
-| **Business Thinking** | Construcción de target alineada al problema real, segmentación de audiencias |
-| **Visualización** | Matplotlib, Seaborn, heatmaps, boxplots, scatter plots |
-| **Storytelling** | Narrativa MX vs US, hallazgos accionables, limitaciones documentadas |
+| **Interpretability** | SHAP TreeExplainer, beeswarm plots, dependence plots |
+| **Business Thinking** | Target construction aligned to real problem, audience segmentation |
+| **Visualization** | Matplotlib, Seaborn, heatmaps, boxplots, scatter plots |
+| **Storytelling** | MX vs US narrative, actionable findings, documented limitations |
 
 ---
 
-## Limitaciones Honestas
+## Honest Limitations
 
-- **R² moderado (~0.39):** Esperado en datos de comportamiento humano. Muchos factores (eventos externos, algoritmo en tiempo real, historial del canal) no están capturados.
-- **Solo clase positiva:** El dataset solo contiene videos que YA llegaron a trending.
-- **Sin channel-level features:** El historial del canal sería altamente predictivo pero no está en el dataset original.
-
----
-
-## Próximos Pasos
-
-1. **NLP semántico:** Reemplazar features simples del título con embeddings de sentence-transformers multilingüe
-2. **Channel features:** Agregar historial del canal como feature
-3. **Validación temporal:** Entrenar en 2020–2022 y validar en 2023–2024 para verificar estabilidad temporal
-4. **Clasificación binaria:** Reformular como "¿llegará a 7+ días?" — más accionable para estrategas de contenido
-5. **Computer vision:** Análisis de thumbnails para features visuales
+- **Moderate R² (~0.39):** Expected in human behavior data. Many factors (external events, real-time algorithm, channel history) are not captured.
+- **Positive class only:** The dataset only contains videos that ALREADY reached trending.
+- **No channel-level features:** Channel history would be highly predictive but is not in the original dataset.
 
 ---
 
-## Stack Tecnológico
+## Next Steps
+
+1. **Semantic NLP:** Replace simple title features with multilingual sentence-transformers embeddings
+2. **Channel features:** Add channel history as a feature
+3. **Temporal validation:** Train on 2020–2022 and validate on 2023–2024 to verify temporal stability
+4. **Binary classification:** Reframe as "Will it reach 7+ days?" — more actionable for content strategists
+5. **Computer vision:** Thumbnail analysis for visual features
+
+---
+
+## Technical Stack
 
 `Python 3.13` · `pandas` · `numpy` · `LightGBM` · `SHAP` · `scikit-learn` · `matplotlib` · `seaborn`
 
 ---
 
 *Dataset: YouTube Trending Video Dataset — CC0 Public Domain (Kaggle/rsrishav)*
-*3.7 años de datos · 537k+ registros · 2 mercados · 5 notebooks · 19 visualizaciones*
+*3.7 years of data · 537k+ records · 2 markets · 5 notebooks · 19 visualizations*
 
 ---
 

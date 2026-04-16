@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html class="dark" lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>El ADN de un Campeón — Clustering F1 | Daniel Salgado</title>
+<title>The DNA of a Champion — F1 Clustering | Daniel Salgado</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -68,7 +68,7 @@
     <a href="index.html" style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;color:#dee5ff;text-decoration:none;letter-spacing:-.01em">Daniel Salgado</a>
     <a class="back-btn" href="index.html">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-      Volver al portfolio
+      Back to Portfolio
     </a>
   </div>
 </nav>
@@ -78,129 +78,129 @@
 </div>
 
 <script type="text/markdown" id="md-source">
-# El ADN de un Campeón
+# The DNA of a Champion
 
-### Clustering de Pilotos Históricos de Fórmula 1 — 1950 a 2024
-
----
-
-## ¿De qué trata este proyecto?
-
-La Fórmula 1 tiene 75 años de historia y una pregunta que nadie ha respondido del todo bien:
-
-**¿Qué hace a un campeón diferente? ¿Es el talento, el coche, o simplemente la era correcta?**
-
-Tomé datos de 861 pilotos, filtré los 266 con carrera suficiente para ser analizados, construí 17 métricas de rendimiento que permiten comparar a Fangio con Verstappen de forma justa, y apliqué clustering no supervisado para dejar que los datos respondieran solos.
-
-El resultado: **4 arquetipos que estructuran toda la historia del deporte**, desde los pioneros de los años 50 hasta los pilotos que corren hoy.
+### Clustering Historic Formula 1 Drivers — 1950 to 2024
 
 ---
 
-## El Problema Real
+## What is this project about?
 
-Comparar pilotos de distintas eras con estadísticas brutas es un error metodológico. Fangio corrió 51 carreras. Hamilton corrió 356. Decir que Hamilton es "mejor" porque tiene más victorias es irrelevante estadísticamente.
+Formula 1 has 75 years of history and a question that no one has answered very well:
 
-La solución fue construir métricas **rate-based**: tasas, proporciones, posiciones relativas. Así, cada piloto se representa por **cómo rindió dado el contexto de su era**, no por cuánto acumuló.
+**What makes a champion different? Is it talent, the car, or simply the right era?**
 
----
+I took data from 861 drivers, filtered the 266 with sufficient career history to analyze, built 17 performance metrics that allow fairly comparing Fangio to Verstappen, and applied unsupervised clustering to let the data answer itself.
 
-## Qué se hizo
-
-El proyecto siguió un pipeline de Data Science completo:
-
-1. **Auditoría de datos** — 8 CSVs relacionales, detección de nulos, rangos temporales, identificación de limitaciones (qualifying sólo completo desde 2003, laptimes desde 1996)
-
-2. **Feature Engineering** — Joins multi-clave entre tablas, construcción de 17 variables derivadas, clasificación de equipos top por era histórica (los equipos dominantes cambian cada década)
-
-3. **EDA** — Correlaciones clave: win_rate correlaciona 0.86 con podium_rate y 0.82 con títulos mundiales. Pero top_team_ratio solo correlaciona 0.47 — el coche importa, pero no lo explica todo.
-
-4. **Clustering K-Means** — Se evaluaron K entre 2 y 11. El K óptimo estadístico fue K=2 (Silhouette=0.351), pero producía una separación trivial y sin valor interpretativo. Se eligió K=4 (Silhouette=0.322), una diferencia de solo 0.029 puntos que se justifica por arquetipos mucho más ricos y accionables.
-
-5. **Perfilado de arquetipos** — Naming narrativo, radar charts por cluster, identificación de pilotos representativos.
-
-6. **Dashboard interactivo** — HTML autocontenido de 95KB con estética F1: mapa del paddock interactivo, radares por arquetipo, Hall of Fame con buscador en tiempo real, 6 insights no obvios.
+The result: **4 archetypes that structure the entire history of the sport**, from the pioneers of the 1950s to the drivers racing today.
 
 ---
 
-## Lo que se encontró
+## The Real Problem
 
-Los datos revelaron 4 arquetipos naturales que tienen sentido tanto estadística como narrativamente:
+Comparing drivers from different eras with raw statistics is a methodological error. Fangio raced 51 races. Hamilton raced 356. Saying Hamilton is "better" because he has more wins is statistically irrelevant.
 
-**El Panteón** — 11 pilotos. Hamilton, Schumacher, Verstappen, Fangio, Senna, Prost... Win rate del 28%. Casi 1 de cada 3 salidas termina en victoria. 44 títulos mundiales concentrados en este grupo.
-
-**El Gladiador** — 82 pilotos. Alonso, Räikkönen, Mansell, Piquet, Häkkinen... Competidores serios, algunos campeones, pero sus estadísticas globales no alcanzan el nivel del Panteón porque no mantuvieron ese rendimiento toda su carrera.
-
-**El Soldado Moderno** — 37 pilotos. Norris, Russell, Piastri... La era híbrida los define. DNF rate más bajo de la historia (19%) gracias a la fiabilidad mecánica moderna, pero sin acceso a material ganador.
-
-**El Pionero Frágil** — 136 pilotos. El grupo más numeroso. DNF rate del 57% — no porque fueran malos pilotos, sino porque los coches de los años 50-70 simplemente se rompían. Son víctimas estadísticas de su época.
+The solution was to build **rate-based metrics**: rates, proportions, relative positions. That way, each driver is represented by **how they performed given the context of their era**, not by how much they accumulated.
 
 ---
 
-## El insight más importante
+## What was done
 
-> El cuadrante "sin buen coche pero con muchas victorias" está **casi vacío** en toda la historia de la F1.
+The project followed a complete Data Science pipeline:
 
-Stirling Moss se acerca. Nadie más. Esto confirma algo que los fans debaten hace décadas: **sin material competitivo es estadísticamente imposible ganar en Fórmula 1**, no importa el talento.
+1. **Data Audit** — 8 relational CSVs, null detection, temporal ranges, identification of limitations (qualifying only complete from 2003, lap times from 1996)
+
+2. **Feature Engineering** — Multi-key joins between tables, construction of 17 derived variables, classification of top teams by historical era (dominant teams change each decade)
+
+3. **EDA** — Key correlations: win_rate correlates 0.86 with podium_rate and 0.82 with world titles. But top_team_ratio only correlates 0.47 — the car matters, but doesn't explain everything.
+
+4. **K-Means Clustering** — K between 2 and 11 were evaluated. The statistically optimal K was K=2 (Silhouette=0.351), but it produced trivial separation with no interpretive value. K=4 was chosen (Silhouette=0.322), a difference of only 0.029 points justified by much richer and more actionable archetypes.
+
+5. **Archetype Profiling** — Narrative naming, radar charts by cluster, identification of representative drivers.
+
+6. **Interactive Dashboard** — Self-contained 95KB HTML with F1 aesthetics: interactive paddock map, radars by archetype, Hall of Fame with real-time search, 6 non-obvious insights.
 
 ---
 
-## Habilidades demostradas
+## What was found
 
-**Lenguajes y librerías**
+The data revealed 4 natural archetypes that make sense both statistically and narratively:
+
+**The Pantheon** — 11 drivers. Hamilton, Schumacher, Verstappen, Fangio, Senna, Prost... Win rate of 28%. Almost 1 out of every 3 starts ends in victory. 44 world titles concentrated in this group.
+
+**The Gladiator** — 82 drivers. Alonso, Räikkönen, Mansell, Piquet, Häkkinen... Serious competitors, some champions, but their overall statistics don't reach the Pantheon level because they didn't maintain that performance throughout their career.
+
+**The Modern Soldier** — 37 drivers. Norris, Russell, Piastri... The hybrid era defines them. Lowest DNF rate in history (19%) thanks to modern mechanical reliability, but without access to winning machinery.
+
+**The Fragile Pioneer** — 136 drivers. The largest group. DNF rate of 57% — not because they were bad drivers, but because cars from the 1950s-70s simply broke down. They are statistical victims of their era.
+
+---
+
+## The most important insight
+
+> The quadrant "without a good car but with many wins" is **almost empty** in all of F1 history.
+
+Stirling Moss comes close. No one else. This confirms something fans have debated for decades: **without competitive machinery it is statistically impossible to win in Formula 1**, no matter the talent.
+
+---
+
+## Skills Demonstrated
+
+**Languages and Libraries**
 - Python (pandas, numpy, scikit-learn, matplotlib, seaborn)
 - HTML / CSS / JavaScript
 - Chart.js 4.4.0
 
-**Técnicas de Machine Learning**
+**Machine Learning Techniques**
 - K-Means Clustering (sklearn)
-- StandardScaler para normalización pre-clustering
-- PCA para reducción dimensional (2D y 3D)
-- Silhouette Score y Elbow Method para selección de K
-- MinMaxScaler para normalización de radar charts
+- StandardScaler for pre-clustering normalization
+- PCA for dimensional reduction (2D and 3D)
+- Silhouette Score and Elbow Method for K selection
+- MinMaxScaler for radar chart normalization
 
 **Data Engineering**
-- Joins multi-clave entre 8 tablas relacionales
-- Feature engineering desde cero (17 variables derivadas)
-- Manejo de datos faltantes con imputación documentada
-- Limpieza de columnas con tipos mixtos
+- Multi-key joins between 8 relational tables
+- Feature engineering from scratch (17 derived variables)
+- Handling missing data with documented imputation
+- Cleaning columns with mixed types
 
 **Thinking**
-- Decisión de negocio sobre óptimo estadístico (K=4 vs K=2) con justificación documentada
-- Diseño de métricas cross-era comparables (rate-based vs. raw totals)
-- Clasificación contextual de equipos top por era histórica
-- Identificación y documentación de limitaciones del dataset
+- Business decision over statistical optimum (K=4 vs K=2) with documented justification
+- Design of cross-era comparable metrics (rate-based vs. raw totals)
+- Contextual classification of top teams by historical era
+- Identification and documentation of dataset limitations
 
-**Visualización y Storytelling**
-- Dashboard interactivo autocontenido (sin backend, sin servidor)
-- Estética temática F1: paleta de colores, tipografía Orbitron, animaciones CSS
-- Scatter interactivo con filtros por arquetipo y tooltips con estadísticas
-- Radar charts comparativos por arquetipo
-- Hall of Fame con búsqueda en tiempo real
-- 6 insight cards con hallazgos no obvios
-
----
-
-## Pasos siguientes
-
-Lo que haría si este proyecto tuviera una segunda fase:
-
-- **Clustering jerárquico** para validar que los 4 arquetipos son estables con un método distinto a K-Means
-- **Análisis temporal de transición**: ¿En qué temporada específica migró Alonso de un cluster a otro? ¿Cuándo "entró" Verstappen al Panteón?
-- **DBSCAN** para identificar outliers reales: pilotos que no encajan en ningún arquetipo
-- **Variables de contexto adverso**: lluvia, safety cars, estrategias de pit stop — métricas que podrían revelar diferencias dentro del Panteón
-- **Aplicación web real** con Flask o Streamlit para que los fans busquen cualquier piloto y vean su perfil completo
+**Visualization and Storytelling**
+- Self-contained interactive dashboard (no backend, no server)
+- F1 themed aesthetics: color palette, Orbitron typography, CSS animations
+- Interactive scatter with archetype filters and tooltips with statistics
+- Comparative radar charts by archetype
+- Hall of Fame with real-time search
+- 6 insight cards with non-obvious findings
 
 ---
 
-## El entregable
+## Next Steps
 
-El dashboard `dashboard_f1.html` es un archivo HTML de 95KB que se abre en cualquier navegador sin instalar nada. Contiene los 266 pilotos embebidos como JSON, cuatro visualizaciones interactivas y una tabla con buscador. No necesita servidor, no necesita conexión a internet (excepto para la tipografía de Google Fonts).
+What I would do if this project had a second phase:
 
-Es exactamente el tipo de entregable que diferencia un proyecto de portafolio de un notebook bien documentado.
+- **Hierarchical Clustering** to validate that the 4 archetypes are stable with a method other than K-Means
+- **Temporal Transition Analysis**: In what specific season did Alonso migrate from one cluster to another? When did Verstappen "enter" the Pantheon?
+- **DBSCAN** to identify true outliers: drivers that don't fit any archetype
+- **Adversarial Context Variables**: rain, safety cars, pit stop strategies — metrics that could reveal differences within the Pantheon
+- **Real Web Application** with Flask or Streamlit for fans to search any driver and see their full profile
 
 ---
 
-*Proyecto desarrollado como parte de un portafolio de Data Science. Dataset: Kaggle — Formula 1 World Championship 1950–2024 (Ergast API).*
+## The Deliverable
+
+The `dashboard_f1.html` dashboard is a 95KB HTML file that opens in any browser without installing anything. It contains the 266 drivers embedded as JSON, four interactive visualizations, and a table with search. It needs no server, no internet connection (except for Google Fonts).
+
+It's exactly the type of deliverable that differentiates a portfolio project from a well-documented notebook.
+
+---
+
+*Project developed as part of a Data Science portfolio. Dataset: Kaggle — Formula 1 World Championship 1950–2024 (Ergast API).*
 
 ---
 
